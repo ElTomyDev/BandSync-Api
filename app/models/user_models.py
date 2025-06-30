@@ -15,7 +15,7 @@ class UserModel(BaseModel):
     username: str
     description: str | None = None
     create_date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    last_connection: datetime | None
+    last_connection: datetime | None = None
     account_state: AccountStates = AccountStates.ACTIVE
     phone_number: str | None = None
     last_failed_login: datetime | None = None
