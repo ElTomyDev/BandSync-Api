@@ -1,4 +1,4 @@
-from fastapi import Request, Depends
+from fastapi import Request
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 def get_mongo_db(request: Request) -> AsyncIOMotorDatabase:

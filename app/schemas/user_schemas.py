@@ -6,4 +6,7 @@ class RegisterUserSchema(BaseModel):
     username: str = Field(..., min_length=3, max_length=20)
     description: str | None = Field(..., max_length=250)
 
-class UserOutSchema(BaseModel)
+class UserResponseSchema(BaseModel):
+    name: str
+    lastname: str
+    username: str
