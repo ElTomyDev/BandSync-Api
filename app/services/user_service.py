@@ -10,6 +10,6 @@ class UserService:
     async def create_user(self, user_data: UserRegisterSchema) -> UserResponseSchema:
         user = UserModel(**user_data.model_dump()).model_dump()
 
-        await self.db["users"].insert_one(user)
 
+        await self.db["users"].insert_one(user)
         return UserResponseSchema(**user)
