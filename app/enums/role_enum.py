@@ -1,6 +1,6 @@
 from enum import Enum
 
-class MusicalRoles(Enum):
+class MusicalRoles(int, Enum):
     NONE = 0
     GUITARIST = 1
     BASSIST = 2

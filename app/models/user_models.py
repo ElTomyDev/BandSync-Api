@@ -5,7 +5,6 @@ from app.enums.account_state_enum import AccountStates
 from datetime import datetime, timezone
 
 class UserModel(BaseModel):
-    id: str = Field(default_factory=lambda: str(ObjectId), alias="_id")
     id_location: str | None = None
     id_social: str | None = None
     image_url: str | None = None
