@@ -1,8 +1,7 @@
-from fastapi import APIRouter, status, Depends, Request
-from app.schemas.user_schemas import UserRegisterSchema, UserResponseSchema
-from app.services.user_service import UserService
-from app.db.database_provider import get_mongo_db
-from motor.motor_asyncio import AsyncIOMotorDatabase
+from app.features.users.schema import UserRegisterSchema, UserResponseSchema
+from app.features.users.service import UserService
+from fastapi import APIRouter, status, Request
+
 
 class UserRoute:
     def __init__(self) -> None:

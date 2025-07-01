@@ -1,8 +1,8 @@
-from pydantic import BaseModel, Field
-from bson import ObjectId
-from app.enums.role_enum import MusicalRoles
 from app.enums.account_state_enum import AccountStates
+from app.enums.role_enum import MusicalRoles
+from pydantic import BaseModel, Field
 from datetime import datetime, timezone
+from bson import ObjectId
 
 class UserModel(BaseModel):
     id_location: str | None = None

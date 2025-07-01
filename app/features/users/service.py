@@ -1,5 +1,5 @@
-from app.models.user_models import UserModel
-from app.schemas.user_schemas import UserRegisterSchema, UserResponseSchema
+from app.features.users.model import UserModel
+from app.features.users.schema import UserRegisterSchema, UserResponseSchema
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from fastapi import Request
 

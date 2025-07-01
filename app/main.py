@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routes.user_route import UserRoute
+from app.features.users.route import UserRoute
 from app.configs.lifespan import lifespan
 
 app = FastAPI(title="BandSync API", lifespan=lifespan)
