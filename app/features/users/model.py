@@ -21,7 +21,7 @@ class UserModel(BaseModel):
     failed_login_attempts: int = 0
     find_bands: bool = False
     
-     
+    
     class Config:
         json_encoders = {ObjectId: str}
         arbitrary_types_allowed = True
