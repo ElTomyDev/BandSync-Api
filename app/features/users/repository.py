@@ -7,5 +7,5 @@ class UserRepository:
     def __init__(self, request: Request) -> None:
         self.users_collection = request.app.state.db['users']
     
-    async def insert_one(self, user: dict[str, Any]):
-        self.users_collection.insert_one(user)
+    async def insert_one(self, user_dict: dict[str, Any]):
+        self.users_collection.insert_one(user_dict)
