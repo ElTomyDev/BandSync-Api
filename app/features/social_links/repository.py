@@ -14,8 +14,14 @@ class SocialLinkRepository:
         social_link = await self.social_collection.find_one({"_id": ObjectId(id)})
         return SocialLinkResposeSchema(**social_link).model_dump()
     
-    async def update_one_by_id(self, id: str, field: str, value: str) -> dict[str, Any] | None:
+    async def update_one_by_id(self, id: str, field: str, value: str) -> dict[str, int] | None:
         """
-        Actualiza el campo (field) al valor indicado en (value) siempre y cuando el documento a 
-        actualizar corresponda con la id (id)
+        Actualiza el documento que corresponde a la id (id), modifica el campo (field) al valor (value).
         """
+        result = await self.social_collection.update_one(
+            {"_id": ObjectId(id)},
+            {"$set":{field, value}})
+        
+        return {"affected_documents": result.modified_count,
+                "document_matches": result.matched_count}
+        
