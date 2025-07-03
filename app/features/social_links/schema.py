@@ -12,3 +12,14 @@ class SocialLinkUpdateSchema(BaseModel):
     soundcloud: str | None = Field(..., max_length=255)
     bandcamp: str | None = Field(..., max_length=255)
     
+class SocialLinkResposeSchema(BaseModel):
+    instagram: str | None
+    facebook: str | None
+    x: str | None
+    tiktok: str | None
+    reddit: str | None
+    youtube: str | None
+    spotify: str | None
+    soundcloud: str | None
+    bandcamp: str | None
+    
