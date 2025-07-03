@@ -1,7 +1,6 @@
 from app.features.users.model import UserModel
 from app.features.users.repository import UserRepository
 from app.features.users.schema import UserRegisterSchema, UserResponseSchema
-from motor.motor_asyncio import AsyncIOMotorDatabase
 from fastapi import Request
 
 class UserService:
