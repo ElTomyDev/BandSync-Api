@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from bson import ObjectId
 
 class SocialLinkModel(BaseModel):
@@ -12,6 +12,7 @@ class SocialLinkModel(BaseModel):
     soundcloud: str | None = None
     bandcamp: str | None = None
     
-    class Config:
-        json_encoders = {ObjectId: str}
+    model_config = ConfigDict(
         arbitrary_types_allowed = True
+    )
+    

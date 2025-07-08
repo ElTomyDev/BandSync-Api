@@ -1,12 +1,13 @@
 from app.enums.account_state_enum import AccountStates
 from app.enums.role_enum import MusicalRoles
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from datetime import datetime, timezone
 from bson import ObjectId
 
 class UserModel(BaseModel):
-    id_location: str | None = None
-    id_social: str | None = None
+    id: str
+    location_id: str | None = None
+    social_id: str | None = None
     image_url: str | None = None
     musical_role: MusicalRoles = MusicalRoles.NONE
     name: str
@@ -21,7 +22,6 @@ class UserModel(BaseModel):
     failed_login_attempts: int = 0
     find_bands: bool = False
     
-    
-    class Config:
-        json_encoders = {ObjectId: str}
+    model_config = ConfigDict(
         arbitrary_types_allowed = True
+    )
