@@ -7,5 +7,17 @@ class UserRepository:
     def __init__(self, request: Request) -> None:
         self.users_collection = request.app.state.db['users']
     
-    async def insert_one(self, user_dict: dict[str, Any]):
-        self.users_collection.insert_one(user_dict)
+    async def insert_one(self, user_dict: dict[str, Any]) -> None:
+       await self.users_collection.insert_one(user_dict)
+    
+    async def find_one(self, id: str | None = None, username: str | None = None) -> UserModel | None:
+        user = None
+        if id:
+            user = await self.users_collection.find_one({'_id': id})
+        elif username:
+            user = await self.users_collection.find_one({'username': username})
+        
+        if user:
+            return UserModel(**user)
+        return user
+            

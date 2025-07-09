@@ -1,3 +1,4 @@
+from typing import Optional
 from app.enums.account_state_enum import AccountStates
 from app.enums.role_enum import MusicalRoles
 from pydantic import BaseModel, ConfigDict, Field
@@ -5,7 +6,7 @@ from datetime import datetime, timezone
 from bson import ObjectId
 
 class UserModel(BaseModel):
-    id: str
+    id: Optional[str] = Field(default=str(ObjectId()), alias="_id")
     location_id: str | None = None
     social_id: str | None = None
     image_url: str | None = None
@@ -23,5 +24,6 @@ class UserModel(BaseModel):
     find_bands: bool = False
     
     model_config = ConfigDict(
-        arbitrary_types_allowed = True
+        arbitrary_types_allowed = True,
+        serialize_by_alias=True
     )

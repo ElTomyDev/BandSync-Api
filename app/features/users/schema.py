@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel, Field
 
 class UserRegisterSchema(BaseModel):
@@ -7,6 +8,7 @@ class UserRegisterSchema(BaseModel):
     description: str | None = Field(..., max_length=250)
 
 class UserResponseSchema(BaseModel):
+    id: Optional[str] = Field(alias="_id")
     name: str
     lastname: str
     username: str

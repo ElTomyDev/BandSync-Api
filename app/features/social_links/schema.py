@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel, Field
 
 
@@ -13,6 +14,7 @@ class SocialLinkUpdateSchema(BaseModel):
     bandcamp: str | None = Field(..., max_length=255)
     
 class SocialLinkResposeSchema(BaseModel):
+    id: Optional[str] = Field(alias="_id")
     instagram: str | None
     facebook: str | None
     x: str | None
