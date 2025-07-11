@@ -25,7 +25,7 @@ class SocialLinkRepository:
         if value != None:
             result = await self.social_collection.update_one(
                 {"_id": ObjectId(id)},
-                {"$set":{field, value}})
+                {"$set":{field: value}})
         
         return result.modified_count > 0
         

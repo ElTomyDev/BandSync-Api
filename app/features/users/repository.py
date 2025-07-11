@@ -1,4 +1,5 @@
 from typing import Any
+from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from app.features.users.model import UserModel
 from fastapi import Request
@@ -13,7 +14,7 @@ class UserRepository:
     async def find_one(self, id: str | None = None, username: str | None = None) -> UserModel | None:
         user = None
         if id:
-            user = await self.users_collection.find_one({'_id': id})
+            user = await self.users_collection.find_one({'_id': ObjectId(id)})
         elif username:
             user = await self.users_collection.find_one({'username': username})
         

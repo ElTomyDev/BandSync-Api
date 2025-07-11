@@ -1,14 +1,15 @@
-from typing import Optional
+from typing_extensions import Annotated
 from app.enums.account_state_enum import AccountStates
 from app.enums.role_enum import MusicalRoles
 from pydantic import BaseModel, ConfigDict, Field
 from datetime import datetime, timezone
-from bson import ObjectId
+from bson.objectid import ObjectId
+from app.utils.object_id import ObjectIdPydanticAnnotation
 
 class UserModel(BaseModel):
-    id: Optional[str] = Field(default=str(ObjectId()), alias="_id")
+    id: Annotated[ObjectId, ObjectIdPydanticAnnotation] = Field(default_factory=lambda: ObjectId(), alias="_id")
     location_id: str | None = None
-    social_id: str | None = None
+    social_id: Annotated[ObjectId, ObjectIdPydanticAnnotation] | None = None
     image_url: str | None = None
     musical_role: MusicalRoles = MusicalRoles.NONE
     name: str
@@ -25,5 +26,4 @@ class UserModel(BaseModel):
     
     model_config = ConfigDict(
         arbitrary_types_allowed = True,
-        serialize_by_alias=True
-    )
+        serialize_by_alias=True)

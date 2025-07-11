@@ -1,6 +1,7 @@
 from typing import Optional
-from pydantic import BaseModel, Field
-
+from bson import ObjectId
+from pydantic import BaseModel, ConfigDict, Field
+from app.utils.object_id import ObjectIdPydanticAnnotation
 
 class SocialLinkUpdateSchema(BaseModel):
     instagram: str | None = Field(..., max_length=255)
@@ -24,4 +25,9 @@ class SocialLinkResposeSchema(BaseModel):
     spotify: str | None
     soundcloud: str | None
     bandcamp: str | None
+    
+    model_config = ConfigDict(
+        arbitrary_types_allowed = True,
+        serialize_by_alias=True)
+        #json_encoders={ObjectId: str})
     
