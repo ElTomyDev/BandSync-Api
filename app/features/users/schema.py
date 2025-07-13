@@ -1,4 +1,7 @@
-from pydantic import BaseModel, Field
+from bson import ObjectId
+from typing_extensions import Annotated
+from pydantic import BaseModel, ConfigDict, Field
+from app.utils.object_id import ObjectIdPydanticAnnotation
 
 class UserRegisterSchema(BaseModel):
     name: str = Field(..., min_length=2, max_length=50)
@@ -7,6 +10,11 @@ class UserRegisterSchema(BaseModel):
     description: str | None = Field(..., max_length=250)
 
 class UserResponseSchema(BaseModel):
+    id: str = Field(alias='_id')
     name: str
     lastname: str
     username: str
+    
+    model_config = ConfigDict(
+        #arbitrary_types_allowed = True,
+        serialize_by_alias=True)
