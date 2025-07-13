@@ -6,7 +6,7 @@ from app.features.social_links.model import SocialLinkModel
 from app.features.users.repository import UserRepository
 from app.features.social_links.repository import SocialLinkRepository
 from app.features.users.schema import UserRegisterSchema, UserResponseSchema
-from app.features.social_links.schema import SocialLinkUpdateSchema
+from app.features.social_links.schema import SocialLinkResposeSchema, SocialLinkUpdateSchema
 from fastapi import Request
 
 class UserService:
@@ -29,13 +29,13 @@ class UserService:
     
     async def update_social_links(self, id: str|None, username: str|None, social_data: SocialLinkUpdateSchema) -> dict[str, Any]:
         if id or username: # Falta lanzar exepcion en caso de False
-            user = await self.user_repository.find_one(id=ObjectId(id), username=username)
+            user = await self.user_repository.find_one(id, username)
             field_update_count = 0 # Representa la cantidad total de campos modificados
             social_id_match_flag = False
             if user: # Si existe el usuario
                 print(type(user.social_id))
                 for field, value in social_data.model_dump().items(): # Para cada (campo, valor) de social_data
-                    update_result = await self.social_link_repository.update_one_by_id(user.social_id, field, value) # Acualiza el documento
+                    update_result = await self.social_link_repository.update_one_by_id(str(user.social_id), field, value) # Acualiza el documento
                     if update_result: # Si la modificacion fue exitosa
                         field_update_count += 1 # Suma la cantidad de campos modificados
                         social_id_match_flag = True
@@ -45,10 +45,10 @@ class UserService:
     
     async def find_social_links(self, id: str|None, username: str|None) -> dict[str, str]:
         social_links = None
-        if id and username:
+        if id or username:
             user = await self.user_repository.find_one(id, username)
-            
             if user:
-                social_links = await self.social_link_repository.find_one_by_id(user.social_id)
-        
-        return social_links
+                social_links = await self.social_link_repository.find_one_by_id(str(user.social_id))
+        if social_links:
+            return SocialLinkResposeSchema(**social_links.model_dump()).model_dump()
+        return {'error': 'social link not found'}
