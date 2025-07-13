@@ -52,3 +52,4 @@ class UserService:
         if social_links:
             return SocialLinkResposeSchema(**social_links.model_dump()).model_dump()
         return {'error': 'social link not found'}
+    
