@@ -1,3 +1,4 @@
+from typing import Any
 from bson import ObjectId
 from app.features.users.model import UserModel
 from app.features.users.mappers import UserMappers
@@ -13,7 +14,7 @@ class UserService:
         self.user_repository = UserRepository(request)
         self.social_link_repository = SocialLinkRepository(request)
     
-    async def create_user(self, user_data: UserRegisterSchema) -> UserResponseSchema:
+    async def create_user(self, user_data: UserRegisterSchema) -> dict[str, Any]:
         user = UserModel(**user_data.model_dump())
         
         # Creo un modelo para las redes sociales
@@ -24,17 +25,30 @@ class UserService:
         await self.social_link_repository.insert_one(social.model_dump())
         await self.user_repository.insert_one(user.model_dump())
         
-        return UserMappers.model_to_schema(user)
+        return UserMappers.model_to_schema(user).model_dump()
     
-    async def update_social_links(self, username: str, social_data: SocialLinkUpdateSchema) -> dict[str, int]:
-        user = await self.user_repository.find_one(username=username)
-        field_update_count = 0 # Representa la cantidad total de campos modificados
-        
-        if user: # Si existe el usuario
-            print(user.social_id)
-            for field, value in social_data.model_dump().items(): # Para cada (campo, valor) de social_data
-                update_result = await self.social_link_repository.update_one_by_id(user.social_id, field, value) # Acualiza el documento
-                if update_result: # Si la modificacion fue exitosa
-                    field_update_count += 1 # Suma la cantidad de campos modificados
+    async def update_social_links(self, id: str|None, username: str|None, social_data: SocialLinkUpdateSchema) -> dict[str, Any]:
+        if id or username: # Falta lanzar exepcion en caso de False
+            user = await self.user_repository.find_one(id=ObjectId(id), username=username)
+            field_update_count = 0 # Representa la cantidad total de campos modificados
+            social_id_match_flag = False
+            if user: # Si existe el usuario
+                print(type(user.social_id))
+                for field, value in social_data.model_dump().items(): # Para cada (campo, valor) de social_data
+                    update_result = await self.social_link_repository.update_one_by_id(user.social_id, field, value) # Acualiza el documento
+                    if update_result: # Si la modificacion fue exitosa
+                        field_update_count += 1 # Suma la cantidad de campos modificados
+                        social_id_match_flag = True
                 
-        return {'modified_fields': field_update_count}
+        return {'modified_fields': field_update_count,
+                'social_id_match': social_id_match_flag}
+    
+    async def find_social_links(self, id: str|None, username: str|None) -> dict[str, str]:
+        social_links = None
+        if id and username:
+            user = await self.user_repository.find_one(id, username)
+            
+            if user:
+                social_links = await self.social_link_repository.find_one_by_id(user.social_id)
+        
+        return social_links

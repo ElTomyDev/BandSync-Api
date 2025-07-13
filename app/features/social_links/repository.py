@@ -11,20 +11,20 @@ class SocialLinkRepository:
     async def insert_one(self, social_link_dict: dict[str, Any]) -> None:
         await self.social_collection.insert_one(social_link_dict)
     
-    async def find_one_by_id(self, id: str) -> SocialLinkModel | None:
-        social_link = await self.social_collection.find_one({"_id": ObjectId(id)})
+    async def find_one_by_id(self, id: ObjectId) -> SocialLinkModel | None:
+        social_link = await self.social_collection.find_one({"_id": id})
         if social_link:
             return SocialLinkModel(**social_link)
         return social_link
     
-    async def update_one_by_id(self, id: str, field: str, value: str) -> bool | None:
+    async def update_one_by_id(self, id: ObjectId, field: str, value: str) -> bool | None:
         """
         Actualiza el documento que corresponde a la id (id), modifica el campo (field) al valor (value).
         Retorna si la actualizacion fue o no exitosa
         """
         if value != None:
             result = await self.social_collection.update_one(
-                {"_id": ObjectId(id)},
+                {"_id": id},
                 {"$set":{field: value}})
         
         return result.modified_count > 0

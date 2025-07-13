@@ -11,10 +11,10 @@ class UserRepository:
     async def insert_one(self, user_dict: dict[str, Any]) -> None:
        await self.users_collection.insert_one(user_dict)
     
-    async def find_one(self, id: str | None = None, username: str | None = None) -> UserModel | None:
+    async def find_one(self, id: ObjectId | None = None, username: str | None = None) -> UserModel | None:
         user = None
         if id:
-            user = await self.users_collection.find_one({'_id': ObjectId(id)})
+            user = await self.users_collection.find_one({'_id': id})
         elif username:
             user = await self.users_collection.find_one({'username': username})
         

@@ -3,7 +3,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.utils.object_id import ObjectIdPydanticAnnotation
 
 class SocialLinkModel(BaseModel):
-    id: ObjectId = Field(default=ObjectId(), alias="_id")
+    id: ObjectId = Field(default_factory=lambda: ObjectId(), alias="_id")
     instagram: str | None = None
     facebook: str | None = None
     x: str | None = None
@@ -16,6 +16,5 @@ class SocialLinkModel(BaseModel):
     
     model_config = ConfigDict(
         arbitrary_types_allowed = True,
-        serialize_by_alias=True,
-        json_encoders={ObjectId: str})
+        serialize_by_alias=True)
     

@@ -7,9 +7,9 @@ from bson.objectid import ObjectId
 from app.utils.object_id import ObjectIdPydanticAnnotation
 
 class UserModel(BaseModel):
-    id: Annotated[ObjectId, ObjectIdPydanticAnnotation] = Field(default_factory=lambda: ObjectId(), alias="_id")
+    id: ObjectId = Field(default_factory=lambda: ObjectId(), alias="_id")
     location_id: str | None = None
-    social_id: Annotated[ObjectId, ObjectIdPydanticAnnotation] | None = None
+    social_id: ObjectId = Field(default=None)
     image_url: str | None = None
     musical_role: MusicalRoles = MusicalRoles.NONE
     name: str
