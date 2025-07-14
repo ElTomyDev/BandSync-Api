@@ -1,10 +1,8 @@
-from typing_extensions import Annotated
 from app.enums.account_state_enum import AccountStates
 from app.enums.role_enum import MusicalRoles
 from pydantic import BaseModel, ConfigDict, Field
 from datetime import datetime, timezone
 from bson.objectid import ObjectId
-from app.utils.object_id import ObjectIdPydanticAnnotation
 
 class UserModel(BaseModel):
     id: ObjectId = Field(default_factory=lambda: ObjectId(), alias="_id")
