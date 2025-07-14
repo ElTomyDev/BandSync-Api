@@ -8,7 +8,7 @@ from app.utils.object_id import ObjectIdPydanticAnnotation
 
 class UserModel(BaseModel):
     id: ObjectId = Field(default_factory=lambda: ObjectId(), alias="_id")
-    location_id: str | None = None
+    location_id: ObjectId = Field(default=None)
     social_id: ObjectId = Field(default=None)
     image_url: str | None = None
     musical_role: MusicalRoles = MusicalRoles.NONE

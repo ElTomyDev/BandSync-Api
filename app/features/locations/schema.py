@@ -1,6 +1,5 @@
 from pydantic import BaseModel, Field
 
-
 class LocationUpdateSchema(BaseModel):
     country: str | None = Field(default=None, max_length=100)
     state: str | None = Field(default=None, max_length=100)
@@ -9,8 +8,9 @@ class LocationUpdateSchema(BaseModel):
     address: str | None = Field(default=None, max_length=150)
     
 class LocationResponseSchema(BaseModel):
-    country: str
-    state: str
-    city: str
-    postal_code: str
-    address: str
+    country: str | None
+    state: str | None
+    city: str | None
+    postal_code: str | None
+    address: str | None
+    
