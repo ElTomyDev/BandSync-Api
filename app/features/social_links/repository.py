@@ -3,6 +3,7 @@ from bson import ObjectId
 from fastapi import Request
 from app.features.social_links.schema import SocialLinkResposeSchema
 from app.features.social_links.model import SocialLinkModel
+from pymongo.results import UpdateResult
 
 class SocialLinkRepository:
     def __init__(self, request: Request) -> None:
@@ -22,10 +23,12 @@ class SocialLinkRepository:
         Actualiza el documento que corresponde a la id (id), modifica el campo (field) al valor (value).
         Retorna si la actualizacion fue o no exitosa
         """
+        modified_flag = False
         if value != None:
             result = await self.social_collection.update_one(
                 {"_id": ObjectId(id)},
                 {"$set":{field: value}})
+            modified_flag = result.modified_count > 0
         
-        return result.modified_count > 0
+        return modified_flag
         
