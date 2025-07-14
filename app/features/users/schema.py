@@ -7,7 +7,7 @@ class UserRegisterSchema(BaseModel):
     name: str = Field(..., min_length=2, max_length=50)
     lastname: str = Field(..., min_length=2, max_length=50)
     username: str = Field(..., min_length=3, max_length=20)
-    description: str | None = Field(..., max_length=250)
+    description: str | None = Field(None, max_length=250)
 
 class UserResponseSchema(BaseModel):
     id: str = Field(alias='_id')
@@ -15,6 +15,4 @@ class UserResponseSchema(BaseModel):
     lastname: str
     username: str
     
-    model_config = ConfigDict(
-        #arbitrary_types_allowed = True,
-        serialize_by_alias=True)
+    model_config = ConfigDict(serialize_by_alias=True)
