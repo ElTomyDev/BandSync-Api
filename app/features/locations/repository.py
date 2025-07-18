@@ -17,7 +17,7 @@ class LocationRepository:
             return LocationModel(**location)
         return location
     
-    async def update_one_by_id(self, id: str, field: str, value: str) -> bool | None:
+    async def update_one_by_id(self, id: str, field: str, value: str|None) -> bool:
         """
         Actualiza el documento que corresponde a la id (id), modifica el campo (field) al valor (value).
         Retorna si la actualizacion fue o no exitosa

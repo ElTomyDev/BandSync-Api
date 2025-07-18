@@ -1,0 +1,28 @@
+from bson import ObjectId
+from fastapi import Request
+
+from app.features.users.features.user_password.model import UserPasswordModel
+from app.features.users.features.user_password.schema import UserPasswordCreateSchema
+
+
+class UserPasswordRepository:
+    def __init__(self, request: Request):
+        self.__passwords_collection = request.state.db['user_passwords']
+    
+    async def insert_one(self, password_dict: dict[str:str]) -> None:
+        await self.__passwords_collection.insert_one(password_dict)
+    
+    async def find_by_user_id(self, user_id: str) -> UserPasswordModel:
+        password = None
+        if user_id:
+            password = await self.__passwords_collection.find_one({'user_id': ObjectId(user_id)})
+        
+        if password:
+            return UserPasswordModel(**password)
+        return password
+    
+    async def update_one_by_user_id(self, user_id: str, new_password: str) -> bool:
+        result = await self.__passwords_collection.update_one(
+            {"user_id": ObjectId(user_id)},
+            {"$set":{'password': new_password}})
+        return result.modified_count > 0
