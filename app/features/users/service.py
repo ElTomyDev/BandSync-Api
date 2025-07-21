@@ -49,7 +49,6 @@ class UserService:
             raise HTTPException(state_code=404, detail=f"The user with {f"id: '{id}'" if id != None else f"username: '{username}'"}. Not found")
         return user
         
-        
     async def update_social_links(self, id: str|None, username: str|None, social_links_data: SocialLinksUpdateSchema) -> dict[str, str]:
         user = await self.find_user_document(id, username)
         social_links_update = self.__social_links_service.update_social_links_document(user, social_links_data)
