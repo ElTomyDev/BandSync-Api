@@ -5,11 +5,11 @@ from pydantic import BaseModel, ConfigDict, Field
 
 class UserPasswordModel(BaseModel):
     id: ObjectId = Field(default_factory=lambda: ObjectId(), alias="_id")
-    id_user: ObjectId = Field(default=None)
+    id_user: ObjectId
     password: str
-    password_reset_token: str | None = Field(dafault=None)
-    password_reset_expiry: str | None = Field(default=None)
-    last_update: datetime | None = Field(default=None)
+    password_reset_token: str | None = None
+    password_reset_expiry: str | None = None
+    last_update: datetime | None = None
     create_date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     
     model_config = ConfigDict(

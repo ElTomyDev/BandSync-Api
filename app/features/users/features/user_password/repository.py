@@ -2,12 +2,11 @@ from bson import ObjectId
 from fastapi import Request
 
 from app.features.users.features.user_password.model import UserPasswordModel
-from app.features.users.features.user_password.schema import UserPasswordCreateSchema
 
 
 class UserPasswordRepository:
     def __init__(self, request: Request):
-        self.__passwords_collection = request.state.db['user_passwords']
+        self.__passwords_collection = request.app.state.db['user_passwords']
     
     async def insert_one(self, password_dict: dict[str:str]) -> None:
         await self.__passwords_collection.insert_one(password_dict)

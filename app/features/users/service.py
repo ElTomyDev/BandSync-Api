@@ -3,6 +3,7 @@ from bson import ObjectId
 from app.features.locations.model import LocationModel
 from app.features.locations.repository import LocationRepository
 from app.features.locations.schema import LocationResponseSchema, LocationUpdateSchema
+from app.features.users.features.user_password.service import UserPasswordService
 from app.features.users.model import UserModel
 from app.features.users.mappers import UserMappers
 from app.features.social_links.model import SocialLinkModel
@@ -17,9 +18,12 @@ class UserService:
         self.__user_repository = UserRepository(request)
         self.__social_link_repository = SocialLinkRepository(request)
         self.__location_repository = LocationRepository(request)
+        self.__password_service = UserPasswordService(request)
     
-    async def create_user(self, user_data: UserRegisterSchema) -> dict[str, Any]:
+    async def create_user_document(self, user_data: UserRegisterSchema) -> dict[str, Any]:
         user = UserModel(**user_data.model_dump())
+
+        await self.__password_service.create_password_document(user, user_data.password)
         
         # Creo un modelo para las redes sociales
         social = SocialLinkModel()

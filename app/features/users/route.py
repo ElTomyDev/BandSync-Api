@@ -60,7 +60,7 @@ class UserRoute:
     
     async def register_user(self, user: UserRegisterSchema, request: Request) -> dict[str, Any]:
         user_service = UserService(request)
-        new_user = await user_service.create_user(user)
+        new_user = await user_service.create_user_document(user)
         return new_user
     
     async def update_user_social_links_by_username(self, username: str, social_data: SocialLinkUpdateSchema, request: Request) -> dict[str, Any]:
