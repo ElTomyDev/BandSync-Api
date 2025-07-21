@@ -1,11 +1,11 @@
 from typing import Any
 from bson import ObjectId
 from fastapi import Request
-from app.features.social_links.schema import SocialLinkResposeSchema
+from app.features.social_links.schema import SocialLinksResponseSchema, SocialLinksUpdateSchema
 from app.features.social_links.model import SocialLinkModel
 from pymongo.results import UpdateResult
 
-class SocialLinkRepository:
+class SocialLinksRepository:
     def __init__(self, request: Request) -> None:
         self.social_collection = request.app.state.db['social_links']
     
@@ -31,4 +31,18 @@ class SocialLinkRepository:
             modified_flag = result.modified_count > 0
         
         return modified_flag
+    
+    async def update_one_by_id(self, id: str, social_links_data: SocialLinksUpdateSchema) -> UpdateResult:
+        result = await self.social_collection.update_one(
+            {"_id": ObjectId(id)},
+            {"$set":{"instagram": social_links_data.instagram,
+                    "facebook": social_links_data.facebook,
+                    "x": social_links_data.x,
+                    "tiktok": social_links_data.tiktok,
+                    "reddit": social_links_data.reddit,
+                    "youtube": social_links_data.youtube,
+                    "spotify": social_links_data.spotify,
+                    "soundcloud": social_links_data.soundcloud,
+                    "bandcamp": social_links_data.bandcamp}})
+        return result
         

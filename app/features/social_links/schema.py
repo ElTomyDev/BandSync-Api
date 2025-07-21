@@ -3,7 +3,7 @@ from bson import ObjectId
 from pydantic import BaseModel, ConfigDict, Field
 from app.utils.object_id import ObjectIdPydanticAnnotation
 
-class SocialLinkUpdateSchema(BaseModel):
+class SocialLinksUpdateSchema(BaseModel):
     instagram: str | None = Field(None, max_length=255)
     facebook: str | None = Field(None, max_length=255)
     x: str | None = Field(None, max_length=255)
@@ -14,7 +14,7 @@ class SocialLinkUpdateSchema(BaseModel):
     soundcloud: str | None = Field(None, max_length=255)
     bandcamp: str | None = Field(None, max_length=255)
     
-class SocialLinkResposeSchema(BaseModel):
+class SocialLinksResponseSchema(BaseModel):
     instagram: str | None
     facebook: str | None
     x: str | None
