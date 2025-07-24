@@ -65,32 +65,32 @@ class UserRoute:
     
     async def update_user_social_links_by_username(self, username: str, social_data: SocialLinksUpdateSchema, request: Request) -> dict[str, Any]:
         user_service = UserService(request)
-        return await user_service.update_social_links(None, username, social_data)
+        return await user_service.update_social_links_from_user(None, username, social_data)
     
     async def update_user_social_links_by_id(self, id: str, social_data: SocialLinksUpdateSchema, request: Request) -> dict[str, Any]:
         user_service = UserService(request)
-        return await user_service.update_social_links(id, None, social_data)
+        return await user_service.update_social_links_from_user(id, None, social_data)
     
     async def find_user_social_links_by_username(self, username: str, request: Request) -> dict[str, str|None]:
         user_service = UserService(request)
-        return await user_service.find_social_links(None, username)
+        return await user_service.find_social_links_from_user(None, username)
     
     async def find_user_social_links_by_id(self, id: str, request: Request) -> dict[str, str|None]:
         user_service = UserService(request)
-        return await user_service.find_social_links(id, None)
+        return await user_service.find_social_links_from_user(id, None)
     
     async def update_user_location_by_username(self, username: str, location_data: LocationUpdateSchema, request: Request) -> dict[str, Any]:
         user_service = UserService(request)
-        return await user_service.update_location(None, username, location_data)
+        return await user_service.update_location_from_user(None, username, location_data)
     
     async def update_user_location_by_id(self, id: str, location_data: LocationUpdateSchema, request: Request) -> dict[str, Any]:
         user_service = UserService(request)
-        return await user_service.update_location(id, None, location_data)
+        return await user_service.update_location_from_user(id, None, location_data)
     
     async def find_user_location_by_username(self, username: str, request: Request) -> dict[str, str|None]:
         user_service = UserService(request)
-        return await user_service.find_location(None, username)
+        return await user_service.find_location_from_user(None, username)
     
     async def find_user_location_by_id(self, id: str, request: Request) -> dict[str, str|None]:
         user_service = UserService(request)
-        return await user_service.find_location(id, None)
+        return await user_service.find_location_from_user(id, None)

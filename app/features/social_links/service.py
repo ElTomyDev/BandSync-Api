@@ -15,24 +15,25 @@ class SocialLinksService:
             raise HTTPException(status_code=404, detail="Reference user not found")
         
         social_links = SocialLinkModel()
-        user.social_id = social_links.id
         await self.__repository.insert_one(social_links.model_dump())
+        user.social_id = social_links.id
         
-    async def update_social_links_document(self, user: UserModel, social_links_data: SocialLinksUpdateSchema)-> dict[str, str]:
+    async def update_social_links_document(self, user: UserModel, social_links_data: SocialLinksUpdateSchema)-> dict[str, int]:
         if user == None: # Si el usuario no existe
             raise HTTPException(status_code=404, detail="Reference user not found")
         if user.social_id == None:
-            raise HTTPException(status_code=404, details=f"social_links with id '{user.social_id}' not found")
-        update_result = await self.__repository.update_one_by_id(str(user.social_id), social_links_data)
+            raise HTTPException(status_code=404, details=f"The user reference does not have a 'social_id' assigned")
         
-        social_links = await self.__repository.find_one_by_id(str(user.social_id))
-        return SocialLinksResponseSchema(**social_links.model_dump()).model_dump()
+        update_result = await self.__repository.update_one_by_id(user.social_id, social_links_data)
+        return {'modified_fields': update_result.modified_count}
     
     async def find_social_links_document(self, user: UserModel) -> dict[str, str]:
         if user == None:
             raise HTTPException(status_code=404, detail="Reference user not found")
+        if user.social_id == None:
+            raise HTTPException(status_code=404, details=f"The user reference does not have a 'social_id' assigned")
         
-        social_links = await self.__repository.find_one_by_id(str(user.social_id))
+        social_links = await self.__repository.find_one_by_id(user.social_id)
         if social_links == None:
             raise HTTPException(status_code=404, details=f"social_links with id '{user.social_id}' not found")
         
