@@ -8,8 +8,8 @@ class UserRepository:
     def __init__(self, request: Request) -> None:
         self.__users_collection = request.app.state.db['users']
     
-    async def insert_one(self, user_dict: dict[str, Any]) -> None:
-       await self.__users_collection.insert_one(user_dict)
+    async def insert_one(self, user_dict: UserModel) -> None:
+       await self.__users_collection.insert_one(user_dict.model_dump())
     
     async def find_one(self, id: str | None = None, username: str | None = None) -> UserModel | None:
         user = None
