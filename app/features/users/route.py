@@ -1,5 +1,5 @@
 from typing import Any
-from app.features.locations.schema import LocationUpdateSchema
+from app.features.locations.schema import LocationResponseSchema, LocationUpdateSchema
 from app.features.users.schema import UserRegisterSchema, UserResponseSchema
 from app.features.social_links.schema import SocialLinksResponseSchema, SocialLinksUpdateSchema
 from app.features.users.service import UserService
@@ -20,13 +20,11 @@ class UserRoute:
         
         self.router.put(
             "/update-social-links-by-username",
-            response_model=None,
             status_code=status.HTTP_204_NO_CONTENT
         )(self.update_user_social_links_by_username)
         
         self.router.put(
             "/update-social-links-by-id",
-            response_model=None,
             status_code=status.HTTP_204_NO_CONTENT
         )(self.update_user_social_links_by_id)
         
@@ -45,21 +43,23 @@ class UserRoute:
         # Location
         self.router.put(
             "/update-location-by-username",
-            status_code=status.HTTP_200_OK
+            status_code=status.HTTP_204_NO_CONTENT
         )(self.update_user_location_by_username)
         
         self.router.put(
             "/update-location-by-id",
-            status_code=status.HTTP_200_OK
+            status_code=status.HTTP_204_NO_CONTENT
         )(self.update_user_location_by_id)
         
         self.router.get(
             "/find-location-by-username",
+            response_model=LocationResponseSchema,
             status_code=status.HTTP_200_OK
         )(self.find_user_location_by_username)
         
         self.router.get(
             "/find-location-by-id",
+            response_model=LocationResponseSchema,
             status_code=status.HTTP_200_OK
         )(self.find_user_location_by_id)
     
@@ -84,18 +84,18 @@ class UserRoute:
         user_service = UserService(request)
         return await user_service.find_social_links_from_user(id, None)
     
-    async def update_user_location_by_username(self, username: str, location_data: LocationUpdateSchema, request: Request) -> dict[str, Any]:
+    async def update_user_location_by_username(self, username: str, location_data: LocationUpdateSchema, request: Request) -> None:
         user_service = UserService(request)
         return await user_service.update_location_from_user(None, username, location_data)
     
-    async def update_user_location_by_id(self, id: str, location_data: LocationUpdateSchema, request: Request) -> dict[str, Any]:
+    async def update_user_location_by_id(self, id: str, location_data: LocationUpdateSchema, request: Request) -> None:
         user_service = UserService(request)
         return await user_service.update_location_from_user(id, None, location_data)
     
-    async def find_user_location_by_username(self, username: str, request: Request) -> dict[str, str|None]:
+    async def find_user_location_by_username(self, username: str, request: Request) -> LocationResponseSchema:
         user_service = UserService(request)
         return await user_service.find_location_from_user(None, username)
     
-    async def find_user_location_by_id(self, id: str, request: Request) -> dict[str, str|None]:
+    async def find_user_location_by_id(self, id: str, request: Request) -> LocationResponseSchema:
         user_service = UserService(request)
         return await user_service.find_location_from_user(id, None)

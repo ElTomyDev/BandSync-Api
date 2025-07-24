@@ -54,12 +54,11 @@ class UserService:
         social_links_find = await self.__social_links_service.find_social_links_document(user)
         return social_links_find
     
-    async def update_location_from_user(self, id: str|None, username: str|None, location_data: LocationUpdateSchema) -> dict[str, int]:
+    async def update_location_from_user(self, id: str|None, username: str|None, location_data: LocationUpdateSchema) -> None:
         user = await self.find_user_document(id, username)
-        location_update_result = await self.__location_service.update_location_document(user, location_data)
-        return location_update_result
+        await self.__location_service.update_location_document(user, location_data)
     
-    async def find_location_from_user(self, id: str|None, username: str|None) -> dict[str, str|None]:
+    async def find_location_from_user(self, id: str|None, username: str|None) -> LocationResponseSchema:
         user = await self.find_user_document(id, username)
         location_find = await self.__location_service.find_location_document(user)
         return location_find
