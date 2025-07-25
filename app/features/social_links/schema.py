@@ -3,18 +3,18 @@ from bson import ObjectId
 from pydantic import BaseModel, ConfigDict, Field
 from app.utils.object_id import ObjectIdPydanticAnnotation
 
-class SocialLinkUpdateSchema(BaseModel):
-    instagram: str | None = Field(None, max_length=255)
-    facebook: str | None = Field(None, max_length=255)
-    x: str | None = Field(None, max_length=255)
-    tiktok: str | None = Field(None, max_length=255)
-    reddit: str | None = Field(None, max_length=255)
-    youtube: str | None = Field(None, max_length=255)
-    spotify: str | None = Field(None, max_length=255)
-    soundcloud: str | None = Field(None, max_length=255)
-    bandcamp: str | None = Field(None, max_length=255)
+class SocialLinksUpdateSchema(BaseModel):
+    instagram: Optional[str] = Field(default=None, max_length=255)
+    facebook: Optional[str] = Field(default=None, max_length=255)
+    x: Optional[str] = Field(default=None, max_length=255)
+    tiktok: Optional[str] = Field(default=None, max_length=255)
+    reddit: Optional[str] = Field(default=None, max_length=255)
+    youtube: Optional[str] = Field(default=None, max_length=255)
+    spotify: Optional[str] = Field(default=None, max_length=255)
+    soundcloud: Optional[str] = Field(default=None, max_length=255)
+    bandcamp: Optional[str] = Field(default=None, max_length=255)
     
-class SocialLinkResposeSchema(BaseModel):
+class SocialLinksResponseSchema(BaseModel):
     instagram: str | None
     facebook: str | None
     x: str | None
