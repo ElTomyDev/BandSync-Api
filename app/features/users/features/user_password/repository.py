@@ -8,8 +8,8 @@ class UserPasswordRepository:
     def __init__(self, request: Request):
         self.__passwords_collection = request.app.state.db['user_passwords']
     
-    async def insert_one(self, password_dict: dict[str:str]) -> None:
-        await self.__passwords_collection.insert_one(password_dict)
+    async def insert_one(self, password_model: UserPasswordModel) -> None:
+        await self.__passwords_collection.insert_one(password_model.model_dump())
     
     async def find_by_user_id(self, user_id: str) -> UserPasswordModel:
         password = None

@@ -9,8 +9,8 @@ class SocialLinksRepository:
     def __init__(self, request: Request) -> None:
         self.social_collection = request.app.state.db['social_links']
     
-    async def insert_one(self, social_link_dict: dict[str, Any]) -> None:
-        await self.social_collection.insert_one(social_link_dict)
+    async def insert_one(self, social_link_model: SocialLinkModel) -> None:
+        await self.social_collection.insert_one(social_link_model.model_dump())
     
     async def find_one_by_id(self, id: ObjectId) -> SocialLinkModel | None:
         social_link = await self.social_collection.find_one({"_id": id})

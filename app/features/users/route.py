@@ -18,6 +18,7 @@ class UserRoute:
             status_code=status.HTTP_201_CREATED,
         )(self.register_user)
         
+        # Social_links
         self.router.put(
             "/update-social-links-by-username",
             status_code=status.HTTP_204_NO_CONTENT
@@ -40,7 +41,7 @@ class UserRoute:
             status_code=status.HTTP_200_OK
         )(self.find_user_social_links_by_id)
         
-        # Location
+        # Locations
         self.router.put(
             "/update-location-by-username",
             status_code=status.HTTP_204_NO_CONTENT

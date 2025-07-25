@@ -12,6 +12,6 @@ class UserPasswordService:
     
     async def create_password_document(self, user_model: UserModel, password: str) -> None:
         user_password = UserPasswordModel(id_user=user_model.id, password=bcrypt.hash(password))
-        await self.__repository.insert_one(user_password.model_dump())
+        await self.__repository.insert_one(user_password)
     
     

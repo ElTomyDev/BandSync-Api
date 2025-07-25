@@ -16,7 +16,7 @@ class SocialLinksService:
             raise HTTPException(status_code=404, detail="Reference user not found")
         
         social_links = SocialLinkModel()
-        await self.__repository.insert_one(social_links.model_dump())
+        await self.__repository.insert_one(social_links)
         user.social_id = social_links.id
         
     async def update_social_links_document(self, user: UserModel, social_links_data: SocialLinksUpdateSchema) -> None:
