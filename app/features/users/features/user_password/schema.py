@@ -3,7 +3,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class UserPasswordUpdateSchema(BaseModel):
-    last_password: str = Field(...)
+    old_password: str = Field(...)
     new_password: str = Field(..., min_length=6, max_length=255)
 
 class UserPasswordResponseSchema(BaseModel):

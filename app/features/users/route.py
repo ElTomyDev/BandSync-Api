@@ -1,5 +1,6 @@
 from typing import Any
 from app.features.locations.schema import LocationResponseSchema, LocationUpdateSchema
+from app.features.users.features.user_password.schema import UserPasswordUpdateSchema
 from app.features.users.schema import UserRegisterSchema, UserResponseSchema
 from app.features.social_links.schema import SocialLinksResponseSchema, SocialLinksUpdateSchema
 from app.features.users.service import UserService
@@ -17,6 +18,17 @@ class UserRoute:
             response_model=UserResponseSchema,
             status_code=status.HTTP_201_CREATED,
         )(self.register_user)
+        
+        # PUT para actualizar contraseña
+        self.router.put(
+            "/update-password-by-username",
+            status_code=status.HTTP_204_NO_CONTENT
+        )(self.update_password_by_username)
+        
+        self.router.put(
+            "/update-password-by-id",
+            status_code=status.HTTP_204_NO_CONTENT
+        )(self.update_password_by_id)
         
         # Social_links
         self.router.put(
@@ -63,12 +75,22 @@ class UserRoute:
             response_model=LocationResponseSchema,
             status_code=status.HTTP_200_OK
         )(self.find_user_location_by_id)
-    
+
+        
+        
     async def register_user(self, user: UserRegisterSchema, request: Request) -> UserResponseSchema:
         user_service = UserService(request)
         new_user = await user_service.create_user_document(user)
         return new_user
     
+    async def update_password_by_username(self, username: str, password_update_schema: UserPasswordUpdateSchema, request: Request) -> None:
+        user_service = UserService(request)
+        await user_service.update_password(None, username, password_update_schema)
+        
+    async def update_password_by_id(self, id: str, password_update_schema: UserPasswordUpdateSchema, request: Request) -> None:
+        user_service = UserService(request)
+        await user_service.update_password(id, None, password_update_schema)
+        
     async def update_user_social_links_by_username(self, username: str, social_data: SocialLinksUpdateSchema, request: Request) -> None:
         user_service = UserService(request)
         return await user_service.update_social_links_from_user(None, username, social_data)
@@ -84,6 +106,7 @@ class UserRoute:
     async def find_user_social_links_by_id(self, id: str, request: Request) -> SocialLinksResponseSchema:
         user_service = UserService(request)
         return await user_service.find_social_links_from_user(id, None)
+    
     
     async def update_user_location_by_username(self, username: str, location_data: LocationUpdateSchema, request: Request) -> None:
         user_service = UserService(request)

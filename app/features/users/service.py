@@ -1,6 +1,7 @@
 from typing import Any
 from app.features.locations.model import LocationModel
 from app.features.locations.service import LocationService
+from app.features.users.features.user_password.schema import UserPasswordUpdateSchema
 from app.features.users.model import UserModel
 
 from app.features.locations.repository import LocationRepository
@@ -36,7 +37,7 @@ class UserService:
         
         return UserMappers.model_to_schema(user)
     
-    async def find_user_document(self, id: str|None, username: str|None) -> UserModel:
+    async def __find_user_document(self, id: str|None, username: str|None) -> UserModel:
         if id == None and username == None:
             raise HTTPException(status_code=403, detail=f"You must provide at least one field (id or username)")
         
@@ -44,21 +45,25 @@ class UserService:
         if user == None:
             raise HTTPException(state_code=404, detail=f"The user with {f"id: '{id}'" if id != None else f"username: '{username}'"}. Not found")
         return user
-        
+    
     async def update_social_links_from_user(self, id: str|None, username: str|None, social_links_data: SocialLinksUpdateSchema) -> None:
-        user = await self.find_user_document(id, username)
+        user = await self.__find_user_document(id, username)
         await self.__social_links_service.update_social_links_document(user, social_links_data)
     
     async def find_social_links_from_user(self, id: str|None, username: str|None) -> SocialLinksResponseSchema:
-        user = await self.find_user_document(id, username)
+        user = await self.__find_user_document(id, username)
         social_links_find = await self.__social_links_service.find_social_links_document(user)
         return social_links_find
     
     async def update_location_from_user(self, id: str|None, username: str|None, location_data: LocationUpdateSchema) -> None:
-        user = await self.find_user_document(id, username)
+        user = await self.__find_user_document(id, username)
         await self.__location_service.update_location_document(user, location_data)
     
     async def find_location_from_user(self, id: str|None, username: str|None) -> LocationResponseSchema:
-        user = await self.find_user_document(id, username)
+        user = await self.__find_user_document(id, username)
         location_find = await self.__location_service.find_location_document(user)
         return location_find
+
+    async def update_password(self, id: str|None, username: str|None, password_update_schema: UserPasswordUpdateSchema) -> None:
+        user = await self.__find_user_document(id, username)
+        await self.__password_service.update_password_document(user, password_update_schema)

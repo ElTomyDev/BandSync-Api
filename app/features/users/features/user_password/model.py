@@ -5,7 +5,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 class UserPasswordModel(BaseModel):
     id: ObjectId = Field(default_factory=lambda: ObjectId(), alias="_id")
-    id_user: ObjectId
+    user_id: ObjectId
     password: str
     password_reset_token: str | None = None
     password_reset_expiry: str | None = None
