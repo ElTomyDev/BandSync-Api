@@ -6,8 +6,8 @@ from pydantic import BaseModel, ConfigDict, Field
 
 class UserEmailModel(BaseModel):
     id: ObjectId = Field(default_factory=lambda: ObjectId(), alias="_id")
-    user_id: ObjectId = Field(default=None)
-    email: str | None = Field(default=None)
+    user_id: ObjectId
+    email: str
     email_verified: bool = Field(default=False)
     email_verification_token: str | None = Field(default=None)
     email_verification_expiry: datetime | None = Field(default=None)
