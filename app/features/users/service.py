@@ -1,6 +1,7 @@
 from typing import Any
 from app.features.locations.model import LocationModel
 from app.features.locations.service import LocationService
+from app.features.users.features.user_email.service import UserEmailService
 from app.features.users.features.user_password.schema import UserPasswordUpdateSchema
 from app.features.users.model import UserModel
 
@@ -25,17 +26,22 @@ class UserService:
         self.__social_links_service = SocialLinksService(request)
         self.__password_service = UserPasswordService(request)
         self.__location_service = LocationService(request)
+        self.__email_service = UserEmailService(request)
     
     async def create_user_document(self, user_data: UserRegisterSchema) -> UserResponseSchema:
         user = UserModel(**user_data.model_dump())
 
         await self.__password_service.create_password_document(user, user_data.password)
+        await self.__email_service.create_email_document(user, user_data.email)
         await self.__social_links_service.create_social_links_document(user)
         await self.__location_service.create_location_document(user)
         
         await self.__repository.insert_one(user)
         
         return UserMappers.model_to_schema(user)
+    
+    async def verify_email(self, token: str) -> None:
+        await self.__email_service.verify_email(token)
     
     async def __find_user_document(self, id: str|None, username: str|None) -> UserModel:
         if id == None and username == None:
@@ -67,3 +73,5 @@ class UserService:
     async def update_password(self, id: str|None, username: str|None, password_update_schema: UserPasswordUpdateSchema) -> None:
         user = await self.__find_user_document(id, username)
         await self.__password_service.update_password_document(user, password_update_schema)
+    
+    

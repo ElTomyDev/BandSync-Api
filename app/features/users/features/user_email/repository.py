@@ -21,17 +21,22 @@ class UserEmailRepository:
     async def update_email_by_user_id(self, user_id: ObjectId, new_email: str) -> UpdateResult:
         result = await self.__collection.update_one(
             {"user_id": user_id},
-            {"$set":{
-                'email': new_email,
-                }
+            {"$set":{'email': new_email}
             })
         return result
     
-    async def update_verification_by_user_id(self, user_id: ObjectId) -> UpdateResult:
+    async def find_one_by_token(self, token: str) -> UserEmailModel | None:
+        email = await self.__collection.find_one({'email_verification_token': token})
+        
+        if email:
+            return UserEmailModel(**email)
+        return None
+    
+    async def mark_as_verified_by_id(self, email_id: ObjectId) -> UpdateResult:
         result = await self.__collection.update_one(
-            {"user_id": user_id},
-            {"$set":{
-                'email_verified': True,
-                }
+            {"_id": email_id},
+            {"$set":{'email_verified': True},
+             "$unset": {'email_verification_token':None, 
+                        'email_verification_expiry':None}
             })
         return result
