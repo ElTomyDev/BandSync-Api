@@ -25,6 +25,12 @@ class UserRoute:
             status_code=status.HTTP_204_NO_CONTENT
         )(self.update_password_by_username)
         
+        # GET para verificar el email
+        self.router.get(
+            "/verify-email",
+            status_code=status.HTTP_202_ACCEPTED
+        )(self.verify_email)
+        
         self.router.put(
             "/update-password-by-id",
             status_code=status.HTTP_204_NO_CONTENT
@@ -76,12 +82,15 @@ class UserRoute:
             status_code=status.HTTP_200_OK
         )(self.find_user_location_by_id)
 
-        
-        
+
     async def register_user(self, user: UserRegisterSchema, request: Request) -> UserResponseSchema:
         user_service = UserService(request)
         new_user = await user_service.create_user_document(user)
         return new_user
+    
+    async def verify_email(self, token: str, request: Request) -> None:
+        user_service = UserService(request)
+        await user_service.verify_email(token)
     
     async def update_password_by_username(self, username: str, password_update_schema: UserPasswordUpdateSchema, request: Request) -> None:
         user_service = UserService(request)
@@ -90,7 +99,8 @@ class UserRoute:
     async def update_password_by_id(self, id: str, password_update_schema: UserPasswordUpdateSchema, request: Request) -> None:
         user_service = UserService(request)
         await user_service.update_password(id, None, password_update_schema)
-        
+    
+    
     async def update_user_social_links_by_username(self, username: str, social_data: SocialLinksUpdateSchema, request: Request) -> None:
         user_service = UserService(request)
         return await user_service.update_social_links_from_user(None, username, social_data)
