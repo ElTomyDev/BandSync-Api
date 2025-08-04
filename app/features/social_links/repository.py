@@ -2,20 +2,20 @@ from typing import Any
 from bson import ObjectId
 from fastapi import Request
 from app.features.social_links.schema import SocialLinksResponseSchema, SocialLinksUpdateSchema
-from app.features.social_links.model import SocialLinkModel
+from app.features.social_links.model import SocialLinksModel
 from pymongo.results import UpdateResult
 
 class SocialLinksRepository:
     def __init__(self, request: Request) -> None:
         self.social_collection = request.app.state.db['social_links']
     
-    async def insert_one(self, social_link_model: SocialLinkModel) -> None:
+    async def insert_one(self, social_link_model: SocialLinksModel) -> None:
         await self.social_collection.insert_one(social_link_model.model_dump())
     
-    async def find_one_by_id(self, id: ObjectId) -> SocialLinkModel | None:
+    async def find_one_by_id(self, id: ObjectId) -> SocialLinksModel | None:
         social_link = await self.social_collection.find_one({"_id": id})
         if social_link:
-            return SocialLinkModel(**social_link)
+            return SocialLinksModel(**social_link)
         return social_link
     
     async def update_one_by_id(self, id: ObjectId, social_links_data: SocialLinksUpdateSchema) -> UpdateResult:

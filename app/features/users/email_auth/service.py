@@ -1,25 +1,20 @@
 from datetime import datetime, timedelta, timezone
 from aiosmtplib import SMTP
 import secrets
-from fastapi import HTTPException, Request
+from fastapi import HTTPException
 from email.message import EmailMessage
-from app.features.users.features.user_email.model import UserEmailModel
-from app.features.users.features.user_email.repository import UserEmailRepository
-from app.features.users.model import UserModel
-from app.configs.send_email_config import SMTP_USERNAME, SMTP_PASSWORD, SMTP_HOST, SMTP_PORT, VERIFY_URL_BASE
 
-class UserEmailService:
-    def __init__(self, request: Request):
-        self.__repository = UserEmailRepository(request)
-    
-    async def create_email_document(self, user: UserModel, email: str) -> None:
-        email_created = UserEmailModel(
-            user_id=user.id, 
+from app.configs.send_email_config import SMTP_USERNAME, SMTP_PASSWORD, SMTP_HOST, SMTP_PORT, VERIFY_URL_BASE
+from app.features.users.email_auth.model import EmailAuthModel
+
+class EmailAuthService:
+    async def create_email_dict(self, email: str) -> EmailAuthModel:
+        email_created = EmailAuthModel(
             email=email, 
             email_verification_token=secrets.token_urlsafe(32),
             email_verification_expiry=datetime.now(timezone.utc) + timedelta(hours=48))
-        await self.__repository.insert_one(email_created)
         await self.send_verification_email(email_created.email, email_created.email_verification_token)
+        return email_created
     
     async def verify_email(self, token: str) -> None:
         user_email = await self.__repository.find_one_by_token(token)

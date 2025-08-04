@@ -1,7 +1,6 @@
 from typing import Any
 from app.features.locations.schema import LocationResponseSchema, LocationUpdateSchema
-from app.features.users.features.user_password.schema import UserPasswordUpdateSchema
-from app.features.users.schema import UserRegisterSchema, UserResponseSchema
+from app.features.users.schema import UpdatePasswordSchema, UserRegisterSchema, UserResponseSchema
 from app.features.social_links.schema import SocialLinksResponseSchema, SocialLinksUpdateSchema
 from app.features.users.service import UserService
 from fastapi import APIRouter, status, Request
@@ -19,22 +18,22 @@ class UserRoute:
             status_code=status.HTTP_201_CREATED,
         )(self.register_user)
         
-        # PUT para actualizar contraseña
-        self.router.put(
-            "/update-password-by-username",
-            status_code=status.HTTP_204_NO_CONTENT
-        )(self.update_password_by_username)
-        
         # GET para verificar el email
         self.router.get(
             "/verify-email",
             status_code=status.HTTP_202_ACCEPTED
         )(self.verify_email)
         
+        # Password Auth
         self.router.put(
             "/update-password-by-id",
             status_code=status.HTTP_204_NO_CONTENT
         )(self.update_password_by_id)
+        
+        self.router.put(
+            "/update-password-by-username",
+            status_code=status.HTTP_204_NO_CONTENT
+        )(self.update_password_by_username)
         
         # Social_links
         self.router.put(
@@ -92,15 +91,14 @@ class UserRoute:
         user_service = UserService(request)
         await user_service.verify_email(token)
     
-    async def update_password_by_username(self, username: str, password_update_schema: UserPasswordUpdateSchema, request: Request) -> None:
+    async def update_password_by_id(self, id: str, update_password_data: UpdatePasswordSchema, request: Request) -> None:
         user_service = UserService(request)
-        await user_service.update_password(None, username, password_update_schema)
+        await user_service.update_user_password(id, None, update_password_data)
         
-    async def update_password_by_id(self, id: str, password_update_schema: UserPasswordUpdateSchema, request: Request) -> None:
+    async def update_password_by_username(self, username: str, update_password_data: UpdatePasswordSchema, request: Request) -> None:
         user_service = UserService(request)
-        await user_service.update_password(id, None, password_update_schema)
-    
-    
+        await user_service.update_user_password(None, username, update_password_data)
+        
     async def update_user_social_links_by_username(self, username: str, social_data: SocialLinksUpdateSchema, request: Request) -> None:
         user_service = UserService(request)
         return await user_service.update_social_links_from_user(None, username, social_data)

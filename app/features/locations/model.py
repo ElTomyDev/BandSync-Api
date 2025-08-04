@@ -3,7 +3,6 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class LocationModel(BaseModel):
-    id: ObjectId = Field(default_factory= lambda: ObjectId(), alias="_id")
     country: str | None = Field(default=None)
     state: str | None = Field(default=None)
     city: str | None = Field(default=None)

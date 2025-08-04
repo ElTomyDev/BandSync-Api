@@ -4,9 +4,7 @@ from bson import ObjectId
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class UserEmailModel(BaseModel):
-    id: ObjectId = Field(default_factory=lambda: ObjectId(), alias="_id")
-    user_id: ObjectId
+class EmailAuthModel(BaseModel):
     email: str
     email_verified: bool = Field(default=False)
     email_verification_token: str | None = Field(default=None)

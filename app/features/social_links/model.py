@@ -2,8 +2,7 @@ from bson import ObjectId
 from pydantic import BaseModel, ConfigDict, Field
 from app.utils.object_id import ObjectIdPydanticAnnotation
 
-class SocialLinkModel(BaseModel):
-    id: ObjectId = Field(default_factory=lambda: ObjectId(), alias="_id")
+class SocialLinksModel(BaseModel):
     instagram: str | None = None
     facebook: str | None = None
     x: str | None = None

@@ -16,25 +16,25 @@ class LocationService:
         
         location = LocationModel()
         await self.__repository.insert_one(location)
-        user.location_id = location.id
+        user.location = location.id
 
     async def update_location_document(self, user: UserModel, location_data: LocationUpdateSchema) -> None:
         if user == None: # Si el usuario no existe
             raise HTTPException(status_code=404, detail="Reference user not found")
-        if user.location_id == None:
+        if user.location == None:
             raise HTTPException(status_code=404, details=f"The user reference does not have a 'location_id' assigned")
         
-        update_result = await self.__repository.update_one_by_id(user.location_id, location_data)
+        update_result = await self.__repository.update_one_by_id(user.location, location_data)
     
     async def find_location_document(self, user: UserModel) -> LocationResponseSchema:
         if user == None:
             raise HTTPException(status_code=404, detail="Reference user not found")
-        if user.location_id == None:
+        if user.location == None:
             raise HTTPException(status_code=404, details=f"The user reference does not have a 'location_id' assigned")
         
-        location = await self.__repository.find_one_by_id(user.location_id)
+        location = await self.__repository.find_one_by_id(user.location)
         
         if location == None:
-            raise HTTPException(status_code=404, details=f"location with id '{str(user.location_id)}' not found")
+            raise HTTPException(status_code=404, details=f"location with id '{str(user.location)}' not found")
         return LocationResponseSchema(**location.model_dump())
         

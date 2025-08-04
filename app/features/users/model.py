@@ -1,18 +1,26 @@
+from typing import Any
 from app.enums.account_state_enum import AccountStates
 from app.enums.role_enum import MusicalRoles
 from pydantic import BaseModel, ConfigDict, Field
 from datetime import datetime, timezone
 from bson.objectid import ObjectId
 
+from app.features.locations.model import LocationModel
+from app.features.social_links.model import SocialLinksModel
+from app.features.users.email_auth.model import EmailAuthModel
+from app.features.users.password_auth.model import PasswordAuthModel
+
 class UserModel(BaseModel):
     id: ObjectId = Field(default_factory=lambda: ObjectId(), alias="_id")
-    location_id: ObjectId = Field(default=None)
-    social_id: ObjectId = Field(default=None)
+    location: LocationModel
+    social_links: SocialLinksModel
     image_url: str | None = Field(default=None)
     musical_role: MusicalRoles = Field(default=MusicalRoles.NONE)
     name: str
     lastname: str
     username: str
+    password_auth: PasswordAuthModel
+    email_auth: EmailAuthModel
     description: str | None = Field(default=None)
     create_date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     last_connection: datetime | None = Field(default=None)

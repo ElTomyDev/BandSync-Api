@@ -11,6 +11,10 @@ class UserRegisterSchema(BaseModel):
     email: str = Field(..., max_length=150)
     description: str | None = Field(None, max_length=250)
 
+class UpdatePasswordSchema(BaseModel):
+    old_password: str = Field(...)
+    new_password: str = Field(..., min_length=6, max_length=255)
+
 class UserResponseSchema(BaseModel):
     id: str = Field(alias='_id')
     name: str

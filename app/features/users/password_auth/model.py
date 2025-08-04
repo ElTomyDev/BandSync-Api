@@ -3,9 +3,7 @@ from bson import ObjectId
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class UserPasswordModel(BaseModel):
-    id: ObjectId = Field(default_factory=lambda: ObjectId(), alias="_id")
-    user_id: ObjectId
+class PasswordAuthModel(BaseModel):
     password: str
     password_reset_token: str | None = None
     password_reset_expiry: str | None = None
