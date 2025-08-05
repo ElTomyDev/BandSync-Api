@@ -1,9 +1,10 @@
+from typing import Annotated
 from app.features.locations.schema import LocationUpdateSchema
 from app.features.users.email_auth.service import EmailAuthService
 from app.features.users.schema import UpdatePasswordSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
 from app.features.social_links.schema import UpdateSocialLinksSchema
 from app.features.users.service import UserService
-from fastapi import APIRouter, status, Request
+from fastapi import APIRouter, Body, Depends, status, Request
 
 
 class UserRoute:
@@ -60,20 +61,20 @@ class UserRoute:
     # -----------------------------
     # --- PASSWORD AUTH METHODS ---
     # -----------------------------
-    async def update_password_route(self, user_find_schema: UserFindSchema, update_password_data: UpdatePasswordSchema, request: Request) -> None:
+    async def update_password_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_password_data: Annotated[UpdatePasswordSchema, Body()], request: Request) -> None:
         user_service = UserService(request)
         await user_service.update_user_password(user_find_schema, update_password_data)
     
     # ----------------------------
     # --- SOCIAL LINKS METHODS ---
     # ----------------------------
-    async def update_user_social_links_route(self, user_find_schema: UserFindSchema, social_data: UpdateSocialLinksSchema, request: Request) -> None:
+    async def update_user_social_links_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], social_data: Annotated[UpdateSocialLinksSchema, Body()], request: Request) -> None:
         user_service = UserService(request)
         return await user_service.update_user_social_links(user_find_schema, social_data)
     
     # ------------------------
     # --- LOCATION METHODS ---
     # ------------------------
-    async def update_user_location_route(self, user_find_schema: UserFindSchema, location_data: LocationUpdateSchema, request: Request) -> None:
+    async def update_user_location_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], location_data: Annotated[LocationUpdateSchema, Body()], request: Request) -> None:
         user_service = UserService(request)
         return await user_service.update_user_location(user_find_schema, location_data)
