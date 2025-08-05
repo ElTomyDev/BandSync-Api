@@ -1,7 +1,7 @@
 from typing import Any
 from app.features.locations.schema import LocationResponseSchema, LocationUpdateSchema
 from app.features.users.email_auth.service import EmailAuthService
-from app.features.users.schema import UpdatePasswordSchema, UserRegisterSchema, UserResponseSchema
+from app.features.users.schema import UpdatePasswordSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
 from app.features.social_links.schema import SocialLinksResponseSchema, UpdateSocialLinksSchema
 from app.features.users.service import UserService
 from fastapi import APIRouter, status, Request
@@ -12,123 +12,69 @@ class UserRoute:
         
         self.router = APIRouter(prefix="/users", tags=["Users"])
         
-        # POST para registar un usuario
+        # ROUTE FOR REGISTER NEW USER
         self.router.post(
             "/register",
             response_model=UserResponseSchema,
             status_code=status.HTTP_201_CREATED,
         )(self.register_user)
         
-        # GET para verificar el email
+        # ROUTE FOR VERIFY EMAIL
         self.router.get(
             "/verify-email",
             status_code=status.HTTP_202_ACCEPTED
         )(self.verify_email)
         
-        # Password Auth
+        # ROUTE FOR UPDATE USER PASSWORD
         self.router.put(
-            "/update-password-by-id",
+            "/update-user-password",
             status_code=status.HTTP_204_NO_CONTENT
-        )(self.update_password_by_id)
+        )(self.update_password_route)
         
+        # ROUTE FOR UPDATE SOCIAL LINKS
         self.router.put(
-            "/update-password-by-username",
+            "/update-user-social-links",
             status_code=status.HTTP_204_NO_CONTENT
-        )(self.update_password_by_username)
+        )(self.update_user_social_links_route)
         
-        # Social_links
+        # ROUTE FOR UPDATE LOCATION
         self.router.put(
-            "/update-social-links-by-username",
+            "/update-user-location",
             status_code=status.HTTP_204_NO_CONTENT
-        )(self.update_user_social_links_by_username)
-        
-        self.router.put(
-            "/update-social-links-by-id",
-            status_code=status.HTTP_204_NO_CONTENT
-        )(self.update_user_social_links_by_id)
-        
-        self.router.get(
-            "/find-social-links-by-username",
-            response_model=SocialLinksResponseSchema,
-            status_code=status.HTTP_200_OK
-        )(self.find_user_social_links_by_username)
-        
-        self.router.get(
-            "/find-social-links-by-id",
-            response_model=SocialLinksResponseSchema,
-            status_code=status.HTTP_200_OK
-        )(self.find_user_social_links_by_id)
-        
-        # Locations
-        self.router.put(
-            "/update-location-by-username",
-            status_code=status.HTTP_204_NO_CONTENT
-        )(self.update_user_location_by_username)
-        
-        self.router.put(
-            "/update-location-by-id",
-            status_code=status.HTTP_204_NO_CONTENT
-        )(self.update_user_location_by_id)
-        
-        self.router.get(
-            "/find-location-by-username",
-            response_model=LocationResponseSchema,
-            status_code=status.HTTP_200_OK
-        )(self.find_user_location_by_username)
-        
-        self.router.get(
-            "/find-location-by-id",
-            response_model=LocationResponseSchema,
-            status_code=status.HTTP_200_OK
-        )(self.find_user_location_by_id)
-
-
+        )(self.update_user_location_route)
+    
+    # --------------------
+    # --- USER METHODS ---
+    # --------------------
     async def register_user(self, user: UserRegisterSchema, request: Request) -> UserResponseSchema:
         user_service = UserService(request)
         new_user = await user_service.create_user_document(user)
         return new_user
     
+    # --------------------------
+    # --- EMAIL AUTH METHODS ---
+    # --------------------------
     async def verify_email(self, token: str, request: Request) -> None:
         email_auth_service = EmailAuthService(request)
         await email_auth_service.verify_email(token)
     
-    async def update_password_by_id(self, id: str, update_password_data: UpdatePasswordSchema, request: Request) -> None:
+    # -----------------------------
+    # --- PASSWORD AUTH METHODS ---
+    # -----------------------------
+    async def update_password_route(self, user_find_schema: UserFindSchema, update_password_data: UpdatePasswordSchema, request: Request) -> None:
         user_service = UserService(request)
-        await user_service.update_user_password(id, None, update_password_data)
-        
-    async def update_password_by_username(self, username: str, update_password_data: UpdatePasswordSchema, request: Request) -> None:
-        user_service = UserService(request)
-        await user_service.update_user_password(None, username, update_password_data)
-        
-    async def update_user_social_links_by_username(self, username: str, social_data: UpdateSocialLinksSchema, request: Request) -> None:
-        user_service = UserService(request)
-        return await user_service.update_social_links_from_user(None, username, social_data)
+        await user_service.update_user_password(user_find_schema, update_password_data)
     
-    async def update_user_social_links_by_id(self, id: str, social_data: UpdateSocialLinksSchema, request: Request) -> None:
+    # ----------------------------
+    # --- SOCIAL LINKS METHODS ---
+    # ----------------------------
+    async def update_user_social_links_route(self, user_find_schema: UserFindSchema, social_data: UpdateSocialLinksSchema, request: Request) -> None:
         user_service = UserService(request)
-        return await user_service.update_social_links_from_user(id, None, social_data)
+        return await user_service.update_user_social_links(user_find_schema, social_data)
     
-    async def find_user_social_links_by_username(self, username: str, request: Request) -> SocialLinksResponseSchema:
+    # ------------------------
+    # --- LOCATION METHODS ---
+    # ------------------------
+    async def update_user_location_route(self, user_find_schema: UserFindSchema, location_data: LocationUpdateSchema, request: Request) -> None:
         user_service = UserService(request)
-        return await user_service.find_social_links_from_user(None, username)
-    
-    async def find_user_social_links_by_id(self, id: str, request: Request) -> SocialLinksResponseSchema:
-        user_service = UserService(request)
-        return await user_service.find_social_links_from_user(id, None)
-    
-    
-    async def update_user_location_by_username(self, username: str, location_data: LocationUpdateSchema, request: Request) -> None:
-        user_service = UserService(request)
-        return await user_service.update_location_from_user(None, username, location_data)
-    
-    async def update_user_location_by_id(self, id: str, location_data: LocationUpdateSchema, request: Request) -> None:
-        user_service = UserService(request)
-        return await user_service.update_location_from_user(id, None, location_data)
-    
-    async def find_user_location_by_username(self, username: str, request: Request) -> LocationResponseSchema:
-        user_service = UserService(request)
-        return await user_service.find_location_from_user(None, username)
-    
-    async def find_user_location_by_id(self, id: str, request: Request) -> LocationResponseSchema:
-        user_service = UserService(request)
-        return await user_service.find_location_from_user(id, None)
+        return await user_service.update_user_location(user_find_schema, location_data)
