@@ -27,7 +27,7 @@ class UserService:
     async def __find_user_document(self, user_find_schema: UserFindSchema) -> UserModel:
         UserValidations.valid_id_and_username(user_find_schema)
         user = await self.__repository.find_one(user_find_schema.id, user_find_schema.username)
-        UserValidations.valid_user_existence(user)
+        UserValidations.valid_user_existence(user_find_schema, user)
         return user
     
     async def create_user_document(self, user_data: UserRegisterSchema) -> UserResponseSchema:
