@@ -1,7 +1,5 @@
 from typing import Optional
-from bson import ObjectId
-from pydantic import BaseModel, ConfigDict, Field
-from app.utils.object_id import ObjectIdPydanticAnnotation
+from pydantic import BaseModel, Field
 
 class UpdateSocialLinksSchema(BaseModel):
     instagram: Optional[str] = Field(default=None, max_length=255)

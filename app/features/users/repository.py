@@ -1,6 +1,4 @@
-from typing import Any
 from bson import ObjectId
-from motor.motor_asyncio import AsyncIOMotorDatabase
 from app.features.users.model import UserModel
 from fastapi import Request
 

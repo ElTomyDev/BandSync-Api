@@ -1,4 +1,3 @@
-from typing import Any
 from app.enums.account_state_enum import AccountStates
 from app.enums.role_enum import MusicalRoles
 from pydantic import BaseModel, ConfigDict, Field

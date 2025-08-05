@@ -1,8 +1,8 @@
-from fastapi import HTTPException, Request
+from fastapi import Request
 
 from app.features.locations.model import LocationModel
 from app.features.locations.repository import LocationRepository
-from app.features.locations.schema import LocationResponseSchema, LocationUpdateSchema
+from app.features.locations.schema import LocationUpdateSchema
 from app.features.users.model import UserModel
 
 

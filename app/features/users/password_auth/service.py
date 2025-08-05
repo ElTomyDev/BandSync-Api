@@ -6,7 +6,6 @@ from passlib.hash import bcrypt
 from app.features.users.model import UserModel
 from app.features.users.password_auth.model import PasswordAuthModel
 from app.features.users.password_auth.repository import PasswordAuthRepository
-from app.features.users.schema import UpdatePasswordSchema
 
 class PasswordAuthService:
     def __init__(self, request: Request):

@@ -1,26 +1,19 @@
-from typing import Any
-from app.features.locations.model import LocationModel
 from app.features.locations.service import LocationService
-from app.features.social_links.model import SocialLinksModel
-
-
 from app.features.users.email_auth.service import EmailAuthService
-from app.features.users.model import UserModel
-
 from app.features.users.password_auth.service import PasswordAuthService
-from app.features.users.repository import UserRepository
-
 from app.features.social_links.service import SocialLinksService
 
+from app.features.users.model import UserModel
+from app.features.users.repository import UserRepository
+from app.features.users.validations import UserValidations
 from app.features.users.mappers import UserMappers
 
 from app.features.users.schema import UpdatePasswordSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
-from app.features.locations.schema import LocationResponseSchema, LocationUpdateSchema
-from app.features.social_links.schema import SocialLinksResponseSchema, UpdateSocialLinksSchema
+from app.features.locations.schema import LocationUpdateSchema
+from app.features.social_links.schema import UpdateSocialLinksSchema
 
-from fastapi import HTTPException, Request
+from fastapi import Request
 
-from app.features.users.validations import UserValidations
 
 class UserService:
     def __init__(self, request: Request):

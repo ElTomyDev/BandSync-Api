@@ -1,8 +1,7 @@
-from typing import Any
-from app.features.locations.schema import LocationResponseSchema, LocationUpdateSchema
+from app.features.locations.schema import LocationUpdateSchema
 from app.features.users.email_auth.service import EmailAuthService
 from app.features.users.schema import UpdatePasswordSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
-from app.features.social_links.schema import SocialLinksResponseSchema, UpdateSocialLinksSchema
+from app.features.social_links.schema import UpdateSocialLinksSchema
 from app.features.users.service import UserService
 from fastapi import APIRouter, status, Request
 

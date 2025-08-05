@@ -1,6 +1,4 @@
-from bson import ObjectId
-from pydantic import BaseModel, ConfigDict, Field
-from app.utils.object_id import ObjectIdPydanticAnnotation
+from pydantic import BaseModel, ConfigDict
 
 class SocialLinksModel(BaseModel):
     instagram: str | None = None

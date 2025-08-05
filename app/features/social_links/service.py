@@ -1,9 +1,8 @@
-from typing import Any
-from fastapi import HTTPException, Request
+from fastapi import Request
 
 from app.features.social_links.model import SocialLinksModel
 from app.features.social_links.repository import SocialLinksRepository
-from app.features.social_links.schema import SocialLinksResponseSchema, UpdateSocialLinksSchema
+from app.features.social_links.schema import UpdateSocialLinksSchema
 from app.features.users.model import UserModel
 
 
