@@ -12,8 +12,7 @@ class SocialLinksService:
         self.__repository = SocialLinksRepository(request)
     
     async def create_social_links_model(self) -> SocialLinksModel:
-        social_links = SocialLinksModel()
-        return social_links
+        return SocialLinksModel()
     
     async def update_social_links(self, user: UserModel, social_links_data: UpdateSocialLinksSchema) -> None:
         update_result = await self.__repository.update_one_by_user_id(user.id, social_links_data)
