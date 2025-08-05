@@ -61,11 +61,11 @@ class UserService:
         user = await self.__find_user_document(user_find_schema)
         await self.__password_auth_service.update_password(user, update_password_data.old_password, update_password_data.new_password)
     
-    async def update_social_links_from_user(self, user_find_schema: UserFindSchema, social_links_data: UpdateSocialLinksSchema) -> None:
+    async def update_user_social_links(self, user_find_schema: UserFindSchema, social_links_data: UpdateSocialLinksSchema) -> None:
         user = await self.__find_user_document(user_find_schema)
         await self.__social_links_service.update_social_links(user, social_links_data)
 
-    async def update_location_from_user(self, user_find_schema: UserFindSchema, location_data: LocationUpdateSchema) -> None:
+    async def update_user_location(self, user_find_schema: UserFindSchema, location_data: LocationUpdateSchema) -> None:
         user = await self.__find_user_document(user_find_schema)
-        await self.__location_service.update_location_document(user, location_data)
+        await self.__location_service.update_location(user, location_data)
     
