@@ -1,7 +1,10 @@
-from bson import ObjectId
-from typing_extensions import Annotated
+from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field
-from app.utils.object_id import ObjectIdPydanticAnnotation
+
+
+class UserFindSchema(BaseModel):
+    id: Optional[str] = Field(None)
+    username: Optional[str] = Field(None)
 
 class UserRegisterSchema(BaseModel):
     name: str = Field(..., min_length=2, max_length=50)
@@ -14,7 +17,7 @@ class UserRegisterSchema(BaseModel):
 class UpdatePasswordSchema(BaseModel):
     old_password: str = Field(...)
     new_password: str = Field(..., min_length=6, max_length=255)
-
+    
 class UserResponseSchema(BaseModel):
     id: str = Field(alias='_id')
     name: str

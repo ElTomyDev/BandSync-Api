@@ -1,7 +1,8 @@
 from typing import Any
 from app.features.locations.schema import LocationResponseSchema, LocationUpdateSchema
+from app.features.users.email_auth.service import EmailAuthService
 from app.features.users.schema import UpdatePasswordSchema, UserRegisterSchema, UserResponseSchema
-from app.features.social_links.schema import SocialLinksResponseSchema, SocialLinksUpdateSchema
+from app.features.social_links.schema import SocialLinksResponseSchema, UpdateSocialLinksSchema
 from app.features.users.service import UserService
 from fastapi import APIRouter, status, Request
 
@@ -88,8 +89,8 @@ class UserRoute:
         return new_user
     
     async def verify_email(self, token: str, request: Request) -> None:
-        user_service = UserService(request)
-        await user_service.verify_email(token)
+        email_auth_service = EmailAuthService(request)
+        await email_auth_service.verify_email(token)
     
     async def update_password_by_id(self, id: str, update_password_data: UpdatePasswordSchema, request: Request) -> None:
         user_service = UserService(request)
@@ -99,11 +100,11 @@ class UserRoute:
         user_service = UserService(request)
         await user_service.update_user_password(None, username, update_password_data)
         
-    async def update_user_social_links_by_username(self, username: str, social_data: SocialLinksUpdateSchema, request: Request) -> None:
+    async def update_user_social_links_by_username(self, username: str, social_data: UpdateSocialLinksSchema, request: Request) -> None:
         user_service = UserService(request)
         return await user_service.update_social_links_from_user(None, username, social_data)
     
-    async def update_user_social_links_by_id(self, id: str, social_data: SocialLinksUpdateSchema, request: Request) -> None:
+    async def update_user_social_links_by_id(self, id: str, social_data: UpdateSocialLinksSchema, request: Request) -> None:
         user_service = UserService(request)
         return await user_service.update_social_links_from_user(id, None, social_data)
     

@@ -12,7 +12,7 @@ class PasswordAuthService:
     def __init__(self, request: Request):
         self.__repository = PasswordAuthRepository(request)
         
-    async def create_password_dict(self, password: str) -> dict[str, Any]:
+    async def create_password_model(self, password: str) -> dict[str, Any]:
         user_password = PasswordAuthModel(
             password = bcrypt.hash(password)
         )

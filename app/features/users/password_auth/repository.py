@@ -14,3 +14,6 @@ class PasswordAuthRepository:
                       "password_auth.last_update": datetime.now(timezone.utc)}}
         )
         return result
+
+    
+        

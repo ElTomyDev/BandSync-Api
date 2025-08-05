@@ -1,34 +1,24 @@
-from typing import Any
 from bson import ObjectId
 from fastapi import Request
-from app.features.social_links.schema import SocialLinksResponseSchema, SocialLinksUpdateSchema
-from app.features.social_links.model import SocialLinksModel
 from pymongo.results import UpdateResult
+
+from app.features.social_links.schema import UpdateSocialLinksSchema
 
 class SocialLinksRepository:
     def __init__(self, request: Request) -> None:
-        self.social_collection = request.app.state.db['social_links']
+        self.__user_collection = request.app.state.db['users']
     
-    async def insert_one(self, social_link_model: SocialLinksModel) -> None:
-        await self.social_collection.insert_one(social_link_model.model_dump())
-    
-    async def find_one_by_id(self, id: ObjectId) -> SocialLinksModel | None:
-        social_link = await self.social_collection.find_one({"_id": id})
-        if social_link:
-            return SocialLinksModel(**social_link)
-        return social_link
-    
-    async def update_one_by_id(self, id: ObjectId, social_links_data: SocialLinksUpdateSchema) -> UpdateResult:
-        result = await self.social_collection.update_one(
-            {"_id": id},
-            {"$set":{"instagram": social_links_data.instagram,
-                    "facebook": social_links_data.facebook,
-                    "x": social_links_data.x,
-                    "tiktok": social_links_data.tiktok,
-                    "reddit": social_links_data.reddit,
-                    "youtube": social_links_data.youtube,
-                    "spotify": social_links_data.spotify,
-                    "soundcloud": social_links_data.soundcloud,
-                    "bandcamp": social_links_data.bandcamp}})
-        return result
+    async def update_one_by_user_id(self, user_id: ObjectId, social_links_data: UpdateSocialLinksSchema) -> UpdateResult:
+        update_result = await self.__user_collection.update_one(
+            {"_id": user_id},
+            {"$set":{"social_links.instagram": social_links_data.instagram,
+                    "social_links.facebook": social_links_data.facebook,
+                    "social_links.x": social_links_data.x,
+                    "social_links.tiktok": social_links_data.tiktok,
+                    "social_links.reddit": social_links_data.reddit,
+                    "social_links.youtube": social_links_data.youtube,
+                    "social_links.spotify": social_links_data.spotify,
+                    "social_links.soundcloud": social_links_data.soundcloud,
+                    "social_links.bandcamp": social_links_data.bandcamp}})
+        return update_result
         
