@@ -14,6 +14,6 @@ class LocationService:
         return LocationModel()
 
     async def update_location(self, user: UserModel, location_data: LocationUpdateSchema) -> None:
-        update_result = await self.__repository.update_one_by_user_id(user.location, location_data)
+        update_result = await self.__repository.update_one_by_user_id(user.id, location_data)
     
     

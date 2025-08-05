@@ -18,7 +18,7 @@ class PasswordAuthService:
         return user_password
     
     async def update_password(self, user_model: UserModel, old_password: str, new_password: str) -> None:
-        if not bcrypt.verify(old_password, user_model.password_auth['password']):
+        if not bcrypt.verify(old_password, user_model.password_auth.password):
             raise HTTPException(status_code=400, detail="The password is incorrect")
         
         update_result = await self.__repository.update_password(user_model.id, bcrypt.hash(new_password))
