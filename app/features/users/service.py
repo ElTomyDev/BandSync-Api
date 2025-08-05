@@ -31,8 +31,8 @@ class UserService:
         return user
     
     async def create_user_document(self, user_data: UserRegisterSchema) -> UserResponseSchema:
-        location_model = await self.__social_links_service.create_social_links_model()
-        social_links_model = await self.__location_service.create_location_model()
+        social_links_model = await self.__social_links_service.create_social_links_model()
+        location_model = await self.__location_service.create_location_model()
         password_auth_model = await self.__password_auth_service.create_password_model(user_data.password)
         email_auth_model = await self.__email_auth_service.create_email_model(user_data.email)
         
