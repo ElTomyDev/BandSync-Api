@@ -1,5 +1,6 @@
 from app.features.locations.service import LocationService
 from app.features.users.email_auth.service import EmailAuthService
+from app.features.users.password_auth.schema import UpdatePasswordSchema
 from app.features.users.password_auth.service import PasswordAuthService
 from app.features.social_links.service import SocialLinksService
 
@@ -8,7 +9,7 @@ from app.features.users.repository import UserRepository
 from app.features.users.validations import UserValidations
 from app.features.users.mappers import UserMappers
 
-from app.features.users.schema import UpdatePasswordSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
+from app.features.users.schema import UserFindSchema, UserResponseSchema
 from app.features.locations.schema import LocationUpdateSchema
 from app.features.social_links.schema import UpdateSocialLinksSchema
 
