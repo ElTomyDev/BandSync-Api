@@ -12,7 +12,7 @@ from app.features.users.schema import UpdatePasswordSchema, UserFindSchema, User
 from app.features.locations.schema import LocationUpdateSchema
 from app.features.social_links.schema import UpdateSocialLinksSchema
 
-from fastapi import Request
+from fastapi import HTTPException, Request
 
 
 class UserService:
@@ -62,3 +62,8 @@ class UserService:
         user = await self.__find_user_document(user_find_schema)
         await self.__location_service.update_location(user, location_data)
     
+    async def delete_user(self, user_find_schema: UserFindSchema) -> None:
+        UserValidations.valid_id_and_username(user_find_schema)
+        delete_result = await self.__repository.delete_one(user_find_schema.id, user_find_schema.username)
+        if delete_result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="User not found")

@@ -19,6 +19,12 @@ class UserRoute:
             status_code=status.HTTP_201_CREATED,
         )(self.register_user)
         
+        # ROUTE FOR DELETE USER
+        self.router.delete(
+            "/delete-user",
+            status_code=status.HTTP_204_NO_CONTENT,
+        )(self.delete_user)
+        
         # ROUTE FOR VERIFY EMAIL
         self.router.get(
             "/verify-email",
@@ -50,6 +56,10 @@ class UserRoute:
         user_service = UserService(request)
         new_user = await user_service.create_user_document(user)
         return new_user
+    
+    async def delete_user(self, user_find_schema: Annotated[UserFindSchema, Depends()], request: Request) -> None:
+        user_service = UserService(request)
+        await user_service.delete_user(user_find_schema)
     
     # --------------------------
     # --- EMAIL AUTH METHODS ---
