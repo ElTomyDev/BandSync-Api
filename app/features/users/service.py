@@ -65,5 +65,5 @@ class UserService:
     async def delete_user(self, user_find_schema: UserFindSchema) -> None:
         UserValidations.valid_id_and_username(user_find_schema)
         delete_result = await self.__repository.delete_one(user_find_schema.id, user_find_schema.username)
-        if delete_result.matched_count == 0:
+        if delete_result.deleted_count == 0:
             raise HTTPException(status_code=404, detail="User not found")

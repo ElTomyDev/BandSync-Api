@@ -13,6 +13,8 @@ class UserRepository:
         user = None
         if id == None:
             user = await self.__users_collection.find_one({'username': username})
+            if user:
+                return UserModel(**user)
         user = await self.__users_collection.find_one({'_id': ObjectId(id)})
         
         if user:
@@ -22,6 +24,6 @@ class UserRepository:
     async def delete_one(self, id: str|None=None, username: str|None=None) -> DeleteResult:
         if id == None:
             delete_result = await self.__users_collection.delete_one({'username': username})
-            
+            return delete_result
         delete_result = await self.__users_collection.delete_one({'_id': ObjectId(id)})
         return delete_result
