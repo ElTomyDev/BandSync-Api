@@ -29,3 +29,7 @@ class UserValidations:
             raise HTTPException(
                 status_code=404, 
                 detail=f"The user with {f"id: '{user_find_schema.id}'" if user_find_schema.id != None else f"username: '{user_find_schema.username}'"}. Not found")
+    
+    def valid_username_in_use(exist_user: bool, username: str) -> None:
+        if exist_user:
+            raise HTTPException(status_code=409, detail=f"The username {username} is already in use.")

@@ -1,7 +1,8 @@
 from typing import Annotated
 from app.features.locations.schema import LocationUpdateSchema
 from app.features.users.email_auth.service import EmailAuthService
-from app.features.users.schema import UpdatePasswordSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
+from app.features.users.password_auth.schema import UpdatePasswordSchema
+from app.features.users.schema import UserFindSchema, UserRegisterSchema, UserResponseSchema
 from app.features.social_links.schema import UpdateSocialLinksSchema
 from app.features.users.service import UserService
 from fastapi import APIRouter, Body, Depends, status, Request
