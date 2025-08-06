@@ -32,7 +32,7 @@ class UserService:
         return user
     
     async def create_user_document(self, user_data: UserRegisterSchema) -> UserResponseSchema:
-        UserValidations.valid_username_in_use(await self.__repository.exist_user(None, user_data.username), user_data.username)
+        UserValidations.valid_username_in_use(await self.__repository.exist_username(None, user_data.username), user_data.username)
         
         social_links_model = await self.__social_links_service.create_social_links_model()
         location_model = await self.__location_service.create_location_model()

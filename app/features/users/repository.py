@@ -21,7 +21,7 @@ class UserRepository:
             return UserModel(**user)
         return user
     
-    async def exist_user(self, id: str|None=None, username: str|None=None)-> bool:
+    async def exist_username(self, id: str|None=None, username: str|None=None)-> bool:
         return await self.find_one(id, username) != None
     
     async def delete_one(self, id: str|None=None, username: str|None=None) -> DeleteResult:
