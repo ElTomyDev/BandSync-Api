@@ -1,11 +1,12 @@
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
-from .configs.db_config import MONGO_URI, MONGO_DB_NAME
+from ..configs.db_config import MONGO_URI, MONGO_DB_NAME
 from app.configs.logging_config import logger
+from fastapi import FastAPI
 
 client: AsyncIOMotorClient | None = None # Futura instancia del cliente de mongo
 db: AsyncIOMotorDatabase | None = None # Futura representacion de la base de datos
 
-async def connect_mongo_database() -> None:
+async def connect_mongo_database(app: FastAPI) -> None:
     """
     Funcion asincronica que se encarga de establecer la conexion con el cliente de Mongo y obtener
     guardar una referencia de la base de datos en `db`
@@ -15,6 +16,7 @@ async def connect_mongo_database() -> None:
     db = client[MONGO_DB_NAME] # Obtiene una referencia a la base de datos especificada en [MONGO_DB_NAME]
     try:
         await db.command("ping") # Prueba si la conexion esta activa con un 'Ping'
+        app.state.db = db # Guarda una instancia de la db en la app
         logger.info("Base de Datos conectada.")
     except Exception as e:
         logger.error(f"Error al conectar con la Base de Datos: {e}")
