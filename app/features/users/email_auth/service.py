@@ -7,12 +7,14 @@ from email.message import EmailMessage
 from app.configs.send_email_config import SMTP_USERNAME, SMTP_PASSWORD, SMTP_HOST, SMTP_PORT, VERIFY_URL_BASE
 from app.features.users.email_auth.model import EmailAuthModel
 from app.features.users.email_auth.repository import EmailAuthRepository
+from app.features.users.validations import UserValidations
 
 class EmailAuthService:
     def __init__(self, request: Request):
         self.__repository = EmailAuthRepository(request)
         
     async def create_email_model(self, email: str) -> EmailAuthModel:
+        UserValidations.valid_email_in_use(await self.__repository.find_one_by_email(email), email)
         email_created = EmailAuthModel(
             email=email,
             email_verification_token=secrets.token_urlsafe(32),

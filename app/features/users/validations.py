@@ -33,3 +33,7 @@ class UserValidations:
     def valid_username_in_use(exist_user: bool, username: str) -> None:
         if exist_user:
             raise HTTPException(status_code=409, detail=f"The username '{username}' is already in use.")
+    
+    def valid_email_in_use(exist_user: bool, email: str) -> None:
+        if exist_user:
+            raise HTTPException(status_code=409, detail=f"The email '{email}' is already register.")

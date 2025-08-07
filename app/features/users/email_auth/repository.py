@@ -16,7 +16,7 @@ class EmailAuthRepository:
         return None
     
     async def exist_email(self, email: str) -> bool:
-        return await self.find_one_by_email(email)
+        return await self.find_one_by_email(email) != None
     
     async def find_one_by_token(self, token: str) -> UserModel | None:
         user = await self.__users_collection.find_one({'email_auth.email_verification_token': token})
