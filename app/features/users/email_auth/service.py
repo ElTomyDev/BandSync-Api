@@ -25,15 +25,10 @@ class EmailAuthService:
     async def verify_email(self, token: str) -> None:
         user_model = await self.__repository.find_one_by_token(token)
         
-        if user_model == None:
-            raise HTTPException(status_code=409, detail="The email it is already verified")
+        UserValidations.valid_email_is_already_verify(user_model)
         
-        expiry = user_model.email_auth.email_verification_expiry
-        if expiry is None or expiry.tzinfo is None:
-            expiry = expiry.replace(tzinfo=timezone.utc)
-            
-        if expiry < datetime.now(timezone.utc):
-            raise HTTPException(status_code=401, detail="The token is expired")
+        expiry_date = user_model.email_auth.email_verification_expiry
+        UserValidations.valid_email_expiry(expiry_date, user_model.email_auth.email)
         
         await self.__repository.mark_as_verified_by_id(user_model.id)
         
