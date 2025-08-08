@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 from fastapi import HTTPException
+from app.configs.send_email_config import NEW_TOKEN_URL_BASE
 from app.features.users.model import UserModel
 from app.features.users.schema import UserFindSchema
 
@@ -43,9 +44,10 @@ class UserValidations:
         if user_model == None:
             raise HTTPException(status_code=409, detail="The email it is already verified")
     
-    def valid_email_expiry(expiry_date: datetime, email: str) -> None:
+    async def valid_email_expiry(expiry_date: datetime, email: str) -> None:
         if expiry_date is None or expiry_date.tzinfo is None:
             expiry_date = expiry_date.replace(tzinfo=timezone.utc)
             
         if expiry_date < datetime.now(timezone.utc):
-            raise HTTPException(status_code=401, detail="The token is expired")
+            
+            raise HTTPException(status_code=401, detail=f"The token is expired. Click here to generate a new token: {NEW_TOKEN_URL_BASE}/?email={email}")
