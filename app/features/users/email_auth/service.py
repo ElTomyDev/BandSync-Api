@@ -18,7 +18,7 @@ class EmailAuthService:
         email_created = EmailAuthModel(
             email=email,
             email_verification_token=secrets.token_urlsafe(32),
-            email_verification_expiry=datetime.now(timezone.utc) + timedelta(seconds=2))
+            email_verification_expiry=datetime.now(timezone.utc) + timedelta(hours=48))
         await self.send_verification_email(email_created.email, email_created.email_verification_token)
         return email_created
     

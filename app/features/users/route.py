@@ -74,7 +74,7 @@ class UserRoute:
         user_service = UserService(request)
         await user_service.delete_user(user_find_schema)
         
-    async def update_description_router(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_description_schema: Annotated[UpdateDescriptionSchema, Body()], request: Request) -> None:
+    async def update_description_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_description_schema: Annotated[UpdateDescriptionSchema, Body()], request: Request) -> None:
         user_service = UserService(request)
         await user_service.update_user_description(user_find_schema, update_description_schema)
     
