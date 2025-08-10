@@ -9,7 +9,7 @@ from app.features.users.repository import UserRepository
 from app.features.users.validations import UserValidations
 from app.features.users.mappers import UserMappers
 
-from app.features.users.schema import UserFindSchema, UserRegisterSchema, UserResponseSchema
+from app.features.users.schema import UpdateDescriptionSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
 from app.features.locations.schema import LocationUpdateSchema
 from app.features.social_links.schema import UpdateSocialLinksSchema
 
@@ -68,5 +68,17 @@ class UserService:
     async def delete_user(self, user_find_schema: UserFindSchema) -> None:
         UserValidations.valid_id_and_username_fields(user_find_schema)
         delete_result = await self.__repository.delete_one(user_find_schema.id, user_find_schema.username)
-        if delete_result.deleted_count == 0:
-            raise HTTPException(status_code=404, detail="User not found")
+        UserValidations.valid_update_or_delete_result(delete_result.deleted_count, "User not found")
+    
+    async def update_user_description(self, user_find_schema: UserFindSchema, update_description_schema: UpdateDescriptionSchema) -> None:
+        UserValidations.valid_id_and_username_fields(user_find_schema)
+        update_result = await self.__repository.update_one(
+            user_find_schema.id,
+            user_find_schema.username,
+            "description",
+            update_description_schema.new_description
+        )
+        UserValidations.valid_update_or_delete_result(
+            update_result.matched_count, 
+            "An error occurred while trying to update the user's description."
+        )

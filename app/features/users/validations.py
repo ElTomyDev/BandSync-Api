@@ -52,6 +52,6 @@ class UserValidations:
             
             raise HTTPException(status_code=401, detail=f"The token is expired. Click here to generate a new token: {NEW_TOKEN_URL_BASE}/?email={email}")
     
-    def valid_update_result(matched_count: int, msg: str) -> None:
-        if matched_count == 0:
+    def valid_update_or_delete_result(count: int, msg: str) -> None:
+        if count == 0:
             raise HTTPException(status_code=500, detail=msg)

@@ -34,7 +34,7 @@ class EmailAuthService:
     
     async def generate_new_verify_token(self, email: str) -> None:
         update_result, token = await self.__repository.generate_new_token(email)
-        UserValidations.valid_update_result(
+        UserValidations.valid_update_or_delete_result(
             update_result.matched_count, 
             "An error occurred while trying to generate a new token"
         )
