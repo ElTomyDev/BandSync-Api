@@ -2,7 +2,7 @@ from typing import Annotated
 from app.features.locations.schema import LocationUpdateSchema
 from app.features.users.email_auth.service import EmailAuthService
 from app.features.users.password_auth.schema import UpdatePasswordSchema
-from app.features.users.schema import UserFindSchema, UserRegisterSchema, UserResponseSchema
+from app.features.users.schema import UpdateDescriptionSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
 from app.features.social_links.schema import UpdateSocialLinksSchema
 from app.features.users.service import UserService
 from fastapi import APIRouter, Body, Depends, status, Request
@@ -38,6 +38,12 @@ class UserRoute:
             status_code=status.HTTP_202_ACCEPTED
         )(self.generate_new_email_token)
         
+        # ROUTER FOR UPDATE USER DESCRIPTION
+        self.router.put(
+            "/update-user-description",
+            status_code=status.HTTP_204_NO_CONTENT
+        )(self.update_description_route)
+        
         # ROUTE FOR UPDATE USER PASSWORD
         self.router.put(
             "/update-user-password",
@@ -67,6 +73,10 @@ class UserRoute:
     async def delete_user(self, user_find_schema: Annotated[UserFindSchema, Depends()], request: Request) -> None:
         user_service = UserService(request)
         await user_service.delete_user(user_find_schema)
+        
+    async def update_description_router(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_description_schema: Annotated[UpdateDescriptionSchema, Body()], request: Request) -> None:
+        user_service = UserService(request)
+        await user_service.update_user_description(user_find_schema, update_description_schema)
     
     # --------------------------
     # --- EMAIL AUTH METHODS ---
