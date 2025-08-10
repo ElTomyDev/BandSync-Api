@@ -2,7 +2,7 @@ from typing import Annotated
 from app.features.locations.schema import LocationUpdateSchema
 from app.features.users.email_auth.service import EmailAuthService
 from app.features.users.password_auth.schema import UpdatePasswordSchema
-from app.features.users.schema import UpdateDescriptionSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
+from app.features.users.schema import UpdateDescriptionSchema, UpdatePhoneNumberSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
 from app.features.social_links.schema import UpdateSocialLinksSchema
 from app.features.users.service import UserService
 from fastapi import APIRouter, Body, Depends, status, Request
@@ -44,6 +44,12 @@ class UserRoute:
             status_code=status.HTTP_204_NO_CONTENT
         )(self.update_description_route)
         
+        # ROUTER FOR UPDATE USER PHONE NUMBER
+        self.router.put(
+            "/update-user-phone-number",
+            status_code=status.HTTP_204_NO_CONTENT
+        )(self.update_phone_number_route)
+        
         # ROUTE FOR UPDATE USER PASSWORD
         self.router.put(
             "/update-user-password",
@@ -77,6 +83,10 @@ class UserRoute:
     async def update_description_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_description_schema: Annotated[UpdateDescriptionSchema, Body()], request: Request) -> None:
         user_service = UserService(request)
         await user_service.update_user_description(user_find_schema, update_description_schema)
+    
+    async def update_phone_number_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_phone_number_schema: Annotated[UpdatePhoneNumberSchema, Body()], request: Request) -> None:
+        user_service = UserService(request)
+        await user_service.update_user_phone_number(user_find_schema, update_phone_number_schema)
     
     # --------------------------
     # --- EMAIL AUTH METHODS ---
