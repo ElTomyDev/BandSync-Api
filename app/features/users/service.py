@@ -9,7 +9,7 @@ from app.features.users.repository import UserRepository
 from app.features.users.validations import UserValidations
 from app.features.users.mappers import UserMappers
 
-from app.features.users.schema import UpdateDescriptionSchema, UpdateImageURLSchema, UpdateLastnameSchema, UpdateNameSchema, UpdatePhoneNumberSchema, UpdateUsernameSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
+from app.features.users.schema import UpdateDescriptionSchema, UpdateFindBandsSchema, UpdateImageURLSchema, UpdateLastnameSchema, UpdateNameSchema, UpdatePhoneNumberSchema, UpdateUsernameSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
 from app.features.locations.schema import LocationUpdateSchema
 from app.features.social_links.schema import UpdateSocialLinksSchema
 
@@ -146,6 +146,19 @@ class UserService:
             "An error occurred while trying to update the user's image URL."
         )
     
+    async def update_user_find_band(self, user_find_schema: UserFindSchema, update_find_band_schema: UpdateFindBandsSchema) -> None:
+        UserValidations.valid_id_and_username_fields(user_find_schema)
+        update_result = await self.__repository.update_one(
+            user_find_schema.id,
+            user_find_schema.username,
+            "find_bands",
+            update_find_band_schema.find_bands
+        )
+        UserValidations.valid_update_or_delete_result(
+            update_result.matched_count, 
+            "An error occurred while trying to update the find bands."
+        )
+        
     async def update_user_social_links(self, user_find_schema: UserFindSchema, social_links_data: UpdateSocialLinksSchema) -> None:
         user = await self.__find_user_document(user_find_schema)
         await self.__social_links_service.update_social_links(user, social_links_data)
