@@ -2,7 +2,7 @@ from typing import Annotated
 from app.features.locations.schema import LocationUpdateSchema
 from app.features.users.email_auth.service import EmailAuthService
 from app.features.users.password_auth.schema import UpdatePasswordSchema
-from app.features.users.schema import UpdateDescriptionSchema, UpdateNameSchema, UpdatePhoneNumberSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
+from app.features.users.schema import UpdateDescriptionSchema, UpdateLastnameSchema, UpdateNameSchema, UpdatePhoneNumberSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
 from app.features.social_links.schema import UpdateSocialLinksSchema
 from app.features.users.service import UserService
 from fastapi import APIRouter, Body, Depends, status, Request
@@ -97,7 +97,11 @@ class UserRoute:
     async def update_name_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_name_schema: Annotated[UpdateNameSchema, Body()], request: Request) -> None:
         user_service = UserService(request)
         await user_service.update_user_name(user_find_schema, update_name_schema)
-    
+        
+    async def update_lastname_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_lastname_schema: Annotated[UpdateLastnameSchema, Body()], request: Request) -> None:
+        user_service = UserService(request)
+        await user_service.update_user_lastname(user_find_schema, update_lastname_schema)
+        
     # --------------------------
     # --- EMAIL AUTH METHODS ---
     # --------------------------
