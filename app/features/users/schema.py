@@ -29,6 +29,15 @@ class UpdateLastnameSchema(BaseModel):
 class UpdateUsernameSchema(BaseModel):
     new_username: str = Field(..., max_length=20)
 
+class UpdateImageURLSchema(BaseModel):
+    new_image_url: str = Field(..., max_length=255)
+
+class UpdateFindBandsSchema(BaseModel):
+    find_bands: bool = Field(False)
+    
+class UpdateMusicalRoleSchema(BaseModel):
+    musical_role: int = Field(0)
+            
 class UserResponseSchema(BaseModel):
     id: str = Field(alias='_id')
     name: str
