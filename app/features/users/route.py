@@ -56,6 +56,12 @@ class UserRoute:
             status_code=status.HTTP_204_NO_CONTENT
         )(self.update_name_route)
         
+        # ROUTER FOR UPDATE USER LASTNAME
+        self.router.put(
+            "/update-user-lastname",
+            status_code=status.HTTP_204_NO_CONTENT
+        )(self.update_lastname_route)
+        
         # ROUTE FOR UPDATE USER PASSWORD
         self.router.put(
             "/update-user-password",
