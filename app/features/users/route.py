@@ -2,7 +2,7 @@ from typing import Annotated
 from app.features.locations.schema import LocationUpdateSchema
 from app.features.users.email_auth.service import EmailAuthService
 from app.features.users.password_auth.schema import UpdatePasswordSchema
-from app.features.users.schema import UpdateDescriptionSchema, UpdateImageURLSchema, UpdateLastnameSchema, UpdateNameSchema, UpdatePhoneNumberSchema, UpdateUsernameSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
+from app.features.users.schema import UpdateDescriptionSchema, UpdateFindBandsSchema, UpdateImageURLSchema, UpdateLastnameSchema, UpdateNameSchema, UpdatePhoneNumberSchema, UpdateUsernameSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
 from app.features.social_links.schema import UpdateSocialLinksSchema
 from app.features.users.service import UserService
 from fastapi import APIRouter, Body, Depends, status, Request
@@ -74,6 +74,12 @@ class UserRoute:
             status_code=status.HTTP_204_NO_CONTENT
         )(self.update_imageurl_route)
         
+        # ROUTER FOR UPDATE USER FIND BANDS
+        self.router.put(
+            "/update-find-bands",
+            status_code=status.HTTP_204_NO_CONTENT
+        )(self.update_find_bands_route)
+        
         # ROUTE FOR UPDATE USER PASSWORD
         self.router.put(
             "/update-password",
@@ -127,6 +133,10 @@ class UserRoute:
     async def update_imageurl_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_imageurl_schema: Annotated[UpdateImageURLSchema, Body()], request: Request) -> None:
         user_service = UserService(request)
         await user_service.update_user_imageurl(user_find_schema, update_imageurl_schema)
+    
+    async def update_find_bands_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_find_bands_schema: Annotated[UpdateFindBandsSchema, Body()], request: Request) -> None:
+        user_service = UserService(request)
+        await user_service.update_user_find_band(user_find_schema, update_find_bands_schema)
         
     # --------------------------
     # --- EMAIL AUTH METHODS ---
