@@ -32,6 +32,12 @@ class UserRoute:
             status_code=status.HTTP_202_ACCEPTED
         )(self.verify_email)
         
+        # ROUTE FOR GENERATE NEW TOKEN
+        self.router.get(
+            "/generate-new-token",
+            status_code=status.HTTP_202_ACCEPTED
+        )(self.generate_new_email_token)
+        
         # ROUTE FOR UPDATE USER PASSWORD
         self.router.put(
             "/update-user-password",
@@ -68,6 +74,10 @@ class UserRoute:
     async def verify_email(self, token: str, request: Request) -> None:
         email_auth_service = EmailAuthService(request)
         await email_auth_service.verify_email(token)
+    
+    async def generate_new_email_token(self, email: str, request: Request) -> None:
+        email_auth_service = EmailAuthService(request)
+        await email_auth_service.generate_new_verify_token(email)
     
     # -----------------------------
     # --- PASSWORD AUTH METHODS ---

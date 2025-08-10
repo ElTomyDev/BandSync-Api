@@ -6,7 +6,7 @@ from app.features.users.schema import UserFindSchema
 
 
 class UserValidations:
-    def valid_id_and_username(user_find_schema: UserFindSchema) -> None:
+    def valid_id_and_username_fields(user_find_schema: UserFindSchema) -> None:
         """
         Validates that at least one identifier (either `id` or `username`) is provided in the `user_find_schema`.
 
@@ -20,7 +20,7 @@ class UserValidations:
             raise HTTPException(status_code=403, detail=f"You must provide at least one field (id or username)")
     
     def valid_user_existence(user_find_schema: UserFindSchema, user: UserModel) -> None:
-        """
+        """status_code=500, detail="The password could not be updated"
         The function receives a `user_find_schema` with either an `id` or `username`, and a `user` object from a database query.
         If `user` is `None`, it raises an HTTP 404 exception indicating the user was not found.
 
@@ -44,10 +44,14 @@ class UserValidations:
         if user_model == None:
             raise HTTPException(status_code=409, detail="The email it is already verified")
     
-    async def valid_email_expiry(expiry_date: datetime, email: str) -> None:
+    def valid_email_expiry(expiry_date: datetime, email: str) -> None:
         if expiry_date is None or expiry_date.tzinfo is None:
             expiry_date = expiry_date.replace(tzinfo=timezone.utc)
             
         if expiry_date < datetime.now(timezone.utc):
             
             raise HTTPException(status_code=401, detail=f"The token is expired. Click here to generate a new token: {NEW_TOKEN_URL_BASE}/?email={email}")
+    
+    def valid_update_result(matched_count: int, msg: str) -> None:
+        if matched_count == 0:
+            raise HTTPException(status_code=500, detail=msg)

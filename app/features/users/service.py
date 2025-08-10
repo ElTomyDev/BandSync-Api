@@ -26,7 +26,7 @@ class UserService:
         self.__email_auth_service = EmailAuthService(request)
     
     async def __get_user_document(self, user_find_schema: UserFindSchema) -> UserModel:
-        UserValidations.valid_id_and_username(user_find_schema)
+        UserValidations.valid_id_and_username_fields(user_find_schema)
         user = await self.__repository.find_one(user_find_schema.id, user_find_schema.username)
         UserValidations.valid_user_existence(user_find_schema, user)
         return user
@@ -66,7 +66,7 @@ class UserService:
         await self.__location_service.update_location(user, location_data)
     
     async def delete_user(self, user_find_schema: UserFindSchema) -> None:
-        UserValidations.valid_id_and_username(user_find_schema)
+        UserValidations.valid_id_and_username_fields(user_find_schema)
         delete_result = await self.__repository.delete_one(user_find_schema.id, user_find_schema.username)
         if delete_result.deleted_count == 0:
             raise HTTPException(status_code=404, detail="User not found")
