@@ -16,6 +16,9 @@ class UserRegisterSchema(BaseModel):
 
 class UpdateDescriptionSchema(BaseModel):
     new_description: str = Field(..., max_length=250)
+    
+class UpdatePhoneNumberSchema(BaseModel):
+    new_phone_number: str = Field(..., max_length=25)
 
 class UserResponseSchema(BaseModel):
     id: str = Field(alias='_id')
