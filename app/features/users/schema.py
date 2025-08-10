@@ -20,6 +20,15 @@ class UpdateDescriptionSchema(BaseModel):
 class UpdatePhoneNumberSchema(BaseModel):
     new_phone_number: str = Field(..., max_length=25)
 
+class UpdateNameSchema(BaseModel):
+    new_name: str = Field(..., max_length=50)
+
+class UpdateLastnameSchema(BaseModel):
+    new_lastname: str = Field(..., max_length=50)
+
+class UpdateUsernameSchema(BaseModel):
+    new_username: str = Field(..., max_length=20)
+
 class UserResponseSchema(BaseModel):
     id: str = Field(alias='_id')
     name: str
