@@ -9,7 +9,7 @@ from app.features.users.repository import UserRepository
 from app.features.users.validations import UserValidations
 from app.features.users.mappers import UserMappers
 
-from app.features.users.schema import UpdateDescriptionSchema, UpdateLastnameSchema, UpdateNameSchema, UpdatePhoneNumberSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
+from app.features.users.schema import UpdateDescriptionSchema, UpdateLastnameSchema, UpdateNameSchema, UpdatePhoneNumberSchema, UpdateUsernameSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
 from app.features.locations.schema import LocationUpdateSchema
 from app.features.social_links.schema import UpdateSocialLinksSchema
 
@@ -38,7 +38,7 @@ class UserService:
     # --- OTHER METHODS ---
     # ---------------------
     async def create_user_document(self, user_data: UserRegisterSchema) -> UserResponseSchema:
-        UserValidations.valid_username_in_use(await self.__repository.exist_username(None, user_data.username), user_data.username)
+        UserValidations.valid_username_in_use(await self.__repository.exist_username(user_data.username), user_data.username)
         
         social_links_model = await self.__social_links_service.create_social_links_model()
         location_model = await self.__location_service.create_location_model()
@@ -117,6 +117,20 @@ class UserService:
         UserValidations.valid_update_or_delete_result(
             update_result.matched_count, 
             "An error occurred while trying to update the user's lastname."
+        )
+    
+    async def update_user_username(self, user_find_schema: UserFindSchema, update_username_schema: UpdateUsernameSchema) -> None:
+        UserValidations.valid_id_and_username_fields(user_find_schema)
+        UserValidations.valid_username_in_use(await self.__repository.exist_username(update_username_schema.new_username), update_username_schema.new_username)
+        update_result = await self.__repository.update_one(
+            user_find_schema.id,
+            user_find_schema.username,
+            "username",
+            update_username_schema.new_username
+        )
+        UserValidations.valid_update_or_delete_result(
+            update_result.matched_count, 
+            "An error occurred while trying to update the user's username."
         )
     
     async def update_user_social_links(self, user_find_schema: UserFindSchema, social_links_data: UpdateSocialLinksSchema) -> None:

@@ -11,13 +11,11 @@ class UserRepository:
        await self.__users_collection.insert_one(user_dict.model_dump())
     
     async def find_one(self, id: str|None=None, username: str|None=None) -> UserModel | None:
-        user = None
         if id == None:
             user = await self.__users_collection.find_one({'username': username})
             if user:
                 return UserModel(**user)
         user = await self.__users_collection.find_one({'_id': ObjectId(id)})
-        
         if user:
             return UserModel(**user)
         return user
@@ -35,8 +33,8 @@ class UserRepository:
         )
         return update_result
     
-    async def exist_username(self, id: str|None=None, username: str|None=None)-> bool:
-        return await self.find_one(id, username) != None
+    async def exist_username(self, username: str|None=None)-> bool:
+        return await self.find_one(None, username) != None
     
     async def delete_one(self, user_id: str|None=None, username: str|None=None) -> DeleteResult:
         if user_id == None:
