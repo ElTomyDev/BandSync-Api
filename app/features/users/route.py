@@ -2,7 +2,7 @@ from typing import Annotated
 from app.features.locations.schema import LocationUpdateSchema
 from app.features.users.email_auth.service import EmailAuthService
 from app.features.users.password_auth.schema import UpdatePasswordSchema
-from app.features.users.schema import UpdateDescriptionSchema, UpdateFindBandsSchema, UpdateImageURLSchema, UpdateLastnameSchema, UpdateNameSchema, UpdatePhoneNumberSchema, UpdateUsernameSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
+from app.features.users.schema import UpdateDescriptionSchema, UpdateFindBandsSchema, UpdateImageURLSchema, UpdateLastnameSchema, UpdateMusicalRoleSchema, UpdateNameSchema, UpdatePhoneNumberSchema, UpdateUsernameSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
 from app.features.social_links.schema import UpdateSocialLinksSchema
 from app.features.users.service import UserService
 from fastapi import APIRouter, Body, Depends, status, Request
@@ -80,6 +80,12 @@ class UserRoute:
             status_code=status.HTTP_204_NO_CONTENT
         )(self.update_find_bands_route)
         
+        # ROUTER FOR UPDATE USER MUSICAL ROLE
+        self.router.put(
+            "/update-musical-role",
+            status_code=status.HTTP_204_NO_CONTENT
+        )(self.update_musical_role_route)
+        
         # ROUTE FOR UPDATE USER PASSWORD
         self.router.put(
             "/update-password",
@@ -137,7 +143,11 @@ class UserRoute:
     async def update_find_bands_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_find_bands_schema: Annotated[UpdateFindBandsSchema, Body()], request: Request) -> None:
         user_service = UserService(request)
         await user_service.update_user_find_band(user_find_schema, update_find_bands_schema)
-        
+    
+    async def update_musical_role_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_musical_role_schema: Annotated[UpdateMusicalRoleSchema, Body()], request: Request) -> None:
+        user_service = UserService(request)
+        await user_service.update_user_musical_role(user_find_schema, update_musical_role_schema)
+    
     # --------------------------
     # --- EMAIL AUTH METHODS ---
     # --------------------------
