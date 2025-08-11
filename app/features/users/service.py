@@ -53,6 +53,7 @@ class UserService:
             social_links=social_links_model,
             password_auth=password_auth_model,
             email_auth=email_auth_model,
+            login_auth=login_auth_model,
             name=user_data.name,
             lastname=user_data.lastname,
             username=user_data.username,
