@@ -2,7 +2,7 @@ from typing import Annotated
 from app.features.locations.schema import LocationUpdateSchema
 from app.features.users.email_auth.service import EmailAuthService
 from app.features.users.password_auth.schema import UpdatePasswordSchema
-from app.features.users.schema import UpdateDescriptionSchema, UpdateFindBandsSchema, UpdateImageURLSchema, UpdateLastnameSchema, UpdateMusicalRoleSchema, UpdateNameSchema, UpdatePhoneNumberSchema, UpdateUsernameSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
+from app.features.users.schema import UpdateAccountStateSchema, UpdateDescriptionSchema, UpdateFindBandsSchema, UpdateImageURLSchema, UpdateLastnameSchema, UpdateMusicalRoleSchema, UpdateNameSchema, UpdatePhoneNumberSchema, UpdateUsernameSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
 from app.features.social_links.schema import UpdateSocialLinksSchema
 from app.features.users.service import UserService
 from fastapi import APIRouter, Body, Depends, status, Request
@@ -86,6 +86,12 @@ class UserRoute:
             status_code=status.HTTP_204_NO_CONTENT
         )(self.update_musical_role_route)
         
+        # ROUTER FOR UPDATE USER ACCOUNT STATE
+        self.router.put(
+            "/update-musical-role",
+            status_code=status.HTTP_204_NO_CONTENT
+        )(self.update_account_state_route)
+        
         # ROUTE FOR UPDATE USER PASSWORD
         self.router.put(
             "/update-password",
@@ -148,6 +154,10 @@ class UserRoute:
         user_service = UserService(request)
         await user_service.update_user_musical_role(user_find_schema, update_musical_role_schema)
     
+    async def update_account_state_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_account_state_schema: Annotated[UpdateAccountStateSchema, Body()], request: Request) -> None:
+        user_service = UserService(request)
+        await user_service.update_user_account_state(user_find_schema, update_account_state_schema)
+        
     # --------------------------
     # --- EMAIL AUTH METHODS ---
     # --------------------------

@@ -21,11 +21,11 @@ class UserModel(BaseModel):
     find_bands: bool = Field(default=False)
     musical_role: MusicalRoles = Field(default=MusicalRoles.NONE)
     account_state: AccountStates = Field(default=AccountStates.ACTIVE)
-    password_auth: PasswordAuthModel
     location: LocationModel
     social_links: SocialLinksModel
-    email_auth: EmailAuthModel
     login_auth: LoginAuthModel
+    email_auth: EmailAuthModel
+    password_auth: PasswordAuthModel
     create_date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     
     model_config = ConfigDict(
