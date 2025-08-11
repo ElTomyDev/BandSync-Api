@@ -37,7 +37,10 @@ class UpdateFindBandsSchema(BaseModel):
     
 class UpdateMusicalRoleSchema(BaseModel):
     musical_role: int = Field(0)
-            
+
+class UpdateAccountStateSchema(BaseModel):
+    account_state: int = Field(0)
+
 class UserResponseSchema(BaseModel):
     id: str = Field(alias='_id')
     name: str

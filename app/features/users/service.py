@@ -9,7 +9,7 @@ from app.features.users.repository import UserRepository
 from app.features.users.validations import UserValidations
 from app.features.users.mappers import UserMappers
 
-from app.features.users.schema import UpdateDescriptionSchema, UpdateFindBandsSchema, UpdateImageURLSchema, UpdateLastnameSchema, UpdateMusicalRoleSchema, UpdateNameSchema, UpdatePhoneNumberSchema, UpdateUsernameSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
+from app.features.users.schema import UpdateAccountStateSchema, UpdateDescriptionSchema, UpdateFindBandsSchema, UpdateImageURLSchema, UpdateLastnameSchema, UpdateMusicalRoleSchema, UpdateNameSchema, UpdatePhoneNumberSchema, UpdateUsernameSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
 from app.features.locations.schema import LocationUpdateSchema
 from app.features.social_links.schema import UpdateSocialLinksSchema
 
@@ -172,7 +172,21 @@ class UserService:
             update_result.matched_count, 
             "An error occurred while trying to update the musical role."
         )
-        
+    
+    async def update_user_account_state(self, user_find_schema: UserFindSchema, update_account_state_schema: UpdateAccountStateSchema) -> None:
+        UserValidations.valid_account_state_range(update_account_state_schema.account_state)
+        UserValidations.valid_id_and_username_fields(user_find_schema)
+        update_result = await self.__repository.update_one(
+            user_find_schema.id,
+            user_find_schema.username,
+            "account_state",
+            update_account_state_schema.account_state
+        )
+        UserValidations.valid_update_or_delete_result(
+            update_result.matched_count, 
+            "An error occurred while trying to update the account state."
+        )
+    
     async def update_user_social_links(self, user_find_schema: UserFindSchema, social_links_data: UpdateSocialLinksSchema) -> None:
         user = await self.__find_user_document(user_find_schema)
         await self.__social_links_service.update_social_links(user, social_links_data)
