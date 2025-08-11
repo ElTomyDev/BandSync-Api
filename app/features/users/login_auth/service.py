@@ -6,5 +6,5 @@ class LoginAuthService():
     def __init__(self, request: Request):
         pass
     
-    async def create_login_model() -> LoginAuthModel:
+    async def create_login_model(self) -> LoginAuthModel:
         return LoginAuthModel()
