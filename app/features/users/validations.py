@@ -43,7 +43,7 @@ class UserValidations:
             raise HTTPException(status_code=409, detail=f"The email '{email}' is already register.")
     
     def valid_email_is_already_verify(user_model:  UserModel) -> None:
-        if user_model == None:
+        if user_model == None or user_model.email_auth.email_verified == True:
             raise HTTPException(status_code=409, detail="The email it is already verified")
     
     def valid_email_expiry(expiry_date: datetime, email: str) -> None:
