@@ -1,3 +1,4 @@
+from typing import Any
 from app.features.locations.service import LocationService
 from app.features.users.email_auth.service import EmailAuthService
 from app.features.users.login_auth.service import LoginAuthService
@@ -71,6 +72,26 @@ class UserService:
     # ----------------------
     # --- UPDATE METHODS ---
     # ----------------------
+    async def update_user_fields(self, user_find_schema: UserFindSchema, field: str, value: Any) -> None:
+        UserValidations.valid_id_and_username_fields(user_find_schema)
+        if field == "musical_role":
+            UserValidations.valid_musical_role_range(value)
+        if field == "account_state":
+            UserValidations.valid_account_state_range(value)
+        if field == "username":
+            UserValidations.valid_username_in_use(await self.__repository.exist_username(value), value)
+            
+        update_result = await self.__repository.update_one(
+            user_find_schema.id,
+            user_find_schema.username,
+            field,
+            value
+        )
+        UserValidations.valid_update_or_delete_result(
+            update_result.matched_count,
+            f"An error occurred while trying to update the user's {field}"
+        )
+    
     async def update_user_description(self, user_find_schema: UserFindSchema, update_description_schema: UpdateDescriptionSchema) -> None:
         UserValidations.valid_id_and_username_fields(user_find_schema)
         update_result = await self.__repository.update_one(
