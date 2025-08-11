@@ -28,7 +28,7 @@ class UserRepository:
             )
             return update_result
         update_result = await self.__users_collection.update_one(
-            {"_id": user_id},
+            {"_id": ObjectId(user_id)},
             {"$set":{field:value}}
         )
         return update_result
