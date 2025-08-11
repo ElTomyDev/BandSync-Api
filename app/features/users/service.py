@@ -9,7 +9,7 @@ from app.features.users.repository import UserRepository
 from app.features.users.validations import UserValidations
 from app.features.users.mappers import UserMappers
 
-from app.features.users.schema import UpdateDescriptionSchema, UpdateFindBandsSchema, UpdateImageURLSchema, UpdateLastnameSchema, UpdateNameSchema, UpdatePhoneNumberSchema, UpdateUsernameSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
+from app.features.users.schema import UpdateDescriptionSchema, UpdateFindBandsSchema, UpdateImageURLSchema, UpdateLastnameSchema, UpdateMusicalRoleSchema, UpdateNameSchema, UpdatePhoneNumberSchema, UpdateUsernameSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
 from app.features.locations.schema import LocationUpdateSchema
 from app.features.social_links.schema import UpdateSocialLinksSchema
 
@@ -157,6 +157,20 @@ class UserService:
         UserValidations.valid_update_or_delete_result(
             update_result.matched_count, 
             "An error occurred while trying to update the find bands."
+        )
+        
+    async def update_user_musical_role(self, user_find_schema: UserFindSchema, update_musical_role_schema: UpdateMusicalRoleSchema) -> None:
+        UserValidations.valid_musical_role_range(update_musical_role_schema.musical_role)
+        UserValidations.valid_id_and_username_fields(user_find_schema)
+        update_result = await self.__repository.update_one(
+            user_find_schema.id,
+            user_find_schema.username,
+            "musical_role",
+            update_musical_role_schema.musical_role
+        )
+        UserValidations.valid_update_or_delete_result(
+            update_result.matched_count, 
+            "An error occurred while trying to update the musical role."
         )
         
     async def update_user_social_links(self, user_find_schema: UserFindSchema, social_links_data: UpdateSocialLinksSchema) -> None:
