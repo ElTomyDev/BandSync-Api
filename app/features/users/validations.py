@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 from fastapi import HTTPException
 from app.configs.send_email_config import NEW_TOKEN_URL_BASE
+from app.enums.role_enum import MusicalRoles
 from app.features.users.model import UserModel
 from app.features.users.schema import UserFindSchema
 
@@ -55,3 +56,7 @@ class UserValidations:
     def valid_update_or_delete_result(count: int, msg: str) -> None:
         if count == 0:
             raise HTTPException(status_code=500, detail=msg)
+    
+    def valid_musical_role_range(musical_role: int) -> None:
+        if musical_role < 0 or musical_role > len(MusicalRoles) - 1:
+            raise HTTPException(status_code=422, detail=f"The musical_role must be within a range of 0 to {len(musical_role)-1}")
