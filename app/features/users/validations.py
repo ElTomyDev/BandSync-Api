@@ -58,5 +58,5 @@ class UserValidations:
             raise HTTPException(status_code=500, detail=msg)
     
     def valid_musical_role_range(musical_role: int) -> None:
-        if musical_role < 0 or musical_role > len(MusicalRoles) - 1:
-            raise HTTPException(status_code=422, detail=f"The musical_role must be within a range of 0 to {len(musical_role)-1}")
+        if musical_role < 0 or musical_role > len(MusicalRoles)-1:
+            raise HTTPException(status_code=422, detail=f"The musical_role must be within a range of 0 to {len(MusicalRoles)-1}")
