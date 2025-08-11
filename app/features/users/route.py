@@ -88,7 +88,7 @@ class UserRoute:
         
         # ROUTER FOR UPDATE USER ACCOUNT STATE
         self.router.put(
-            "/update-musical-role",
+            "/update-account-state",
             status_code=status.HTTP_204_NO_CONTENT
         )(self.update_account_state_route)
         
