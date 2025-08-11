@@ -1,5 +1,6 @@
 from app.features.locations.service import LocationService
 from app.features.users.email_auth.service import EmailAuthService
+from app.features.users.login_auth.service import LoginAuthService
 from app.features.users.password_auth.schema import UpdatePasswordSchema
 from app.features.users.password_auth.service import PasswordAuthService
 from app.features.social_links.service import SocialLinksService
@@ -24,6 +25,7 @@ class UserService:
         self.__password_auth_service = PasswordAuthService(request)
         self.__location_service = LocationService(request)
         self.__email_auth_service = EmailAuthService(request)
+        self.__login_auth_service = LoginAuthService(request)
     
     # -----------------------
     # --- PRIVATE METHODS ---
@@ -44,6 +46,7 @@ class UserService:
         location_model = await self.__location_service.create_location_model()
         password_auth_model = await self.__password_auth_service.create_password_model(user_data.password)
         email_auth_model = await self.__email_auth_service.create_email_model(user_data.email)
+        login_auth_model = await self.__login_auth_service.create_login_model()
         
         user = UserModel(
             location=location_model,
