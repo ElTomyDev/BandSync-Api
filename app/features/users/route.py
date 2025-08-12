@@ -124,39 +124,39 @@ class UserRoute:
         
     async def update_description_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_description_schema: Annotated[UpdateDescriptionSchema, Body()], request: Request) -> None:
         user_service = UserService(request)
-        await user_service.update_user_description(user_find_schema, update_description_schema)
+        await user_service.update_user_fields(user_find_schema, "description", update_description_schema.new_description)
     
     async def update_phone_number_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_phone_number_schema: Annotated[UpdatePhoneNumberSchema, Body()], request: Request) -> None:
         user_service = UserService(request)
-        await user_service.update_user_phone_number(user_find_schema, update_phone_number_schema)
+        await user_service.update_user_fields(user_find_schema, "phone_number", update_phone_number_schema.new_phone_number)
         
     async def update_name_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_name_schema: Annotated[UpdateNameSchema, Body()], request: Request) -> None:
         user_service = UserService(request)
-        await user_service.update_user_name(user_find_schema, update_name_schema)
+        await user_service.update_user_fields(user_find_schema, "name", update_name_schema.new_name)
         
     async def update_lastname_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_lastname_schema: Annotated[UpdateLastnameSchema, Body()], request: Request) -> None:
         user_service = UserService(request)
-        await user_service.update_user_lastname(user_find_schema, update_lastname_schema)
+        await user_service.update_user_fields(user_find_schema, "lastname", update_lastname_schema.new_lastname)
     
     async def update_username_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_username_schema: Annotated[UpdateUsernameSchema, Body()], request: Request) -> None:
         user_service = UserService(request)
-        await user_service.update_user_username(user_find_schema, update_username_schema)
+        await user_service.update_user_fields(user_find_schema, "username", update_username_schema.new_username)
     
     async def update_imageurl_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_imageurl_schema: Annotated[UpdateImageURLSchema, Body()], request: Request) -> None:
         user_service = UserService(request)
-        await user_service.update_user_imageurl(user_find_schema, update_imageurl_schema)
+        await user_service.update_user_fields(user_find_schema, "image_url", update_imageurl_schema.new_image_url)
     
     async def update_find_bands_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_find_bands_schema: Annotated[UpdateFindBandsSchema, Body()], request: Request) -> None:
         user_service = UserService(request)
-        await user_service.update_user_find_band(user_find_schema, update_find_bands_schema)
+        await user_service.update_user_fields(user_find_schema, "find_bands", update_find_bands_schema.find_bands)
     
     async def update_musical_role_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_musical_role_schema: Annotated[UpdateMusicalRoleSchema, Body()], request: Request) -> None:
         user_service = UserService(request)
-        await user_service.update_user_musical_role(user_find_schema, update_musical_role_schema)
+        await user_service.update_user_fields(user_find_schema, "musical_role", update_musical_role_schema.musical_role)
     
     async def update_account_state_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_account_state_schema: Annotated[UpdateAccountStateSchema, Body()], request: Request) -> None:
         user_service = UserService(request)
-        await user_service.update_user_account_state(user_find_schema, update_account_state_schema)
+        await user_service.update_user_fields(user_find_schema, "account_state", update_account_state_schema.account_state)
         
     # --------------------------
     # --- EMAIL AUTH METHODS ---
