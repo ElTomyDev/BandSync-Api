@@ -13,7 +13,34 @@ class UserRegisterSchema(BaseModel):
     password: str = Field(..., min_length=6, max_length=255)
     email: str = Field(..., max_length=150)
     description: str | None = Field(None, max_length=250)
-  
+
+class UpdateDescriptionSchema(BaseModel):
+    new_description: str = Field(..., max_length=250)
+    
+class UpdatePhoneNumberSchema(BaseModel):
+    new_phone_number: str = Field(..., max_length=25)
+
+class UpdateNameSchema(BaseModel):
+    new_name: str = Field(..., max_length=50)
+
+class UpdateLastnameSchema(BaseModel):
+    new_lastname: str = Field(..., max_length=50)
+
+class UpdateUsernameSchema(BaseModel):
+    new_username: str = Field(..., max_length=20)
+
+class UpdateImageURLSchema(BaseModel):
+    new_image_url: str = Field(..., max_length=255)
+
+class UpdateFindBandsSchema(BaseModel):
+    find_bands: bool = Field(False)
+    
+class UpdateMusicalRoleSchema(BaseModel):
+    musical_role: int = Field(0)
+
+class UpdateAccountStateSchema(BaseModel):
+    account_state: int = Field(0)
+
 class UserResponseSchema(BaseModel):
     id: str = Field(alias='_id')
     name: str
