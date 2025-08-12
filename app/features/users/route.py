@@ -1,5 +1,6 @@
 from typing import Annotated
 from app.features.locations.schema import LocationUpdateSchema
+from app.features.social_links.service import SocialLinksService
 from app.features.users.email_auth.service import EmailAuthService
 from app.features.users.password_auth.schema import UpdatePasswordSchema
 from app.features.users.schema import UpdateAccountStateSchema, UpdateDescriptionSchema, UpdateFindBandsSchema, UpdateImageURLSchema, UpdateLastnameSchema, UpdateMusicalRoleSchema, UpdateNameSchema, UpdatePhoneNumberSchema, UpdateUsernameSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
@@ -180,8 +181,8 @@ class UserRoute:
     # --- SOCIAL LINKS METHODS ---
     # ----------------------------
     async def update_user_social_links_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], social_data: Annotated[UpdateSocialLinksSchema, Body()], request: Request) -> None:
-        user_service = UserService(request)
-        return await user_service.update_user_social_links(user_find_schema, social_data)
+        social_links_service = SocialLinksService(request)
+        return await social_links_service.update_social_links(user_find_schema, social_data)
     
     # ------------------------
     # --- LOCATION METHODS ---

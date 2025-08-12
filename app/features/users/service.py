@@ -91,10 +91,6 @@ class UserService:
             update_result.matched_count,
             f"An error occurred while trying to update the user's {field}"
         )
-    
-    async def update_user_social_links(self, user_find_schema: UserFindSchema, social_links_data: UpdateSocialLinksSchema) -> None:
-        user = await self.__find_user_document(user_find_schema)
-        await self.__social_links_service.update_social_links(user, social_links_data)
 
     async def update_user_location(self, user_find_schema: UserFindSchema, location_data: LocationUpdateSchema) -> None:
         user = await self.__find_user_document(user_find_schema)
