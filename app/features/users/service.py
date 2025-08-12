@@ -91,7 +91,5 @@ class UserService:
             update_result.matched_count,
             f"An error occurred while trying to update the user's {field}"
         )
-    
-    async def update_user_password(self, user_find_schema: UserFindSchema, update_password_data: UpdatePasswordSchema) -> None:
-        user = await self.__find_user_document(user_find_schema)
-        await self.__password_auth_service.update_password(user, update_password_data.old_password, update_password_data.new_password)
+
+

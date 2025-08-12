@@ -4,6 +4,7 @@ from app.features.locations.service import LocationService
 from app.features.social_links.service import SocialLinksService
 from app.features.users.email_auth.service import EmailAuthService
 from app.features.users.password_auth.schema import UpdatePasswordSchema
+from app.features.users.password_auth.service import PasswordAuthService
 from app.features.users.schema import UpdateAccountStateSchema, UpdateDescriptionSchema, UpdateFindBandsSchema, UpdateImageURLSchema, UpdateLastnameSchema, UpdateMusicalRoleSchema, UpdateNameSchema, UpdatePhoneNumberSchema, UpdateUsernameSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
 from app.features.social_links.schema import UpdateSocialLinksSchema
 from app.features.users.service import UserService
@@ -174,9 +175,9 @@ class UserRoute:
     # -----------------------------
     # --- PASSWORD AUTH METHODS ---
     # -----------------------------
-    async def update_password_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_password_data: Annotated[UpdatePasswordSchema, Body()], request: Request) -> None:
-        user_service = UserService(request)
-        await user_service.update_user_password(user_find_schema, update_password_data)
+    async def update_password_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_password_schema: Annotated[UpdatePasswordSchema, Body()], request: Request) -> None:
+        password_auth_service = PasswordAuthService(request)
+        await password_auth_service.update_password(user_find_schema, update_password_schema)
     
     # ----------------------------
     # --- SOCIAL LINKS METHODS ---
