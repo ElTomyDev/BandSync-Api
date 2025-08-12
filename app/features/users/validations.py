@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+import bcrypt
 from fastapi import HTTPException
 from app.configs.send_email_config import NEW_TOKEN_URL_BASE
 from app.enums.account_state_enum import AccountStates
@@ -53,6 +54,10 @@ class UserValidations:
         if expiry_date < datetime.now(timezone.utc):
             
             raise HTTPException(status_code=401, detail=f"The token is expired. Click here to generate a new token: {NEW_TOKEN_URL_BASE}/?email={email}")
+    
+    def valid_password_is_correct(password, to_password) -> None:
+        if not bcrypt.verify(password, to_password):
+            raise HTTPException(status_code=400, detail="The password is incorrect")
     
     def valid_update_or_delete_result(count: int, msg: str) -> None:
         if count == 0:
