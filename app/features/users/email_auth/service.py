@@ -14,7 +14,7 @@ class EmailAuthService:
         self.__repository = EmailAuthRepository(request)
         
     async def create_email_model(self, email: str) -> EmailAuthModel:
-        UserValidations.valid_email_in_use(await self.__repository.find_one_by_email(email), email)
+        UserValidations.valid_email_in_use(await self.__repository.exist_email(email), email)
         email_created = EmailAuthModel(
             email=email,
             email_verification_token=secrets.token_urlsafe(32),
@@ -31,7 +31,17 @@ class EmailAuthService:
         UserValidations.valid_email_expiry(expiry_date, user_model.email_auth.email)
         
         await self.__repository.mark_as_verified_by_id(user_model.id)
+    
+    async def generate_new_verify_token(self, email: str) -> None:
+        update_result, token = await self.__repository.generate_new_token(email)
+        UserValidations.valid_update_or_delete_result(
+            update_result.matched_count, 
+            "An error occurred while trying to generate a new token"
+        )
         
+        await self.send_verification_email(email, token)
+        
+    
     async def send_verification_email(self, to_email: str, token: str):
         msg = EmailMessage()
         msg["From"] = SMTP_USERNAME

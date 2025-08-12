@@ -9,3 +9,4 @@ SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
 
 SMTP_PORT = int(os.getenv("SMTP_PORT"))
 VERIFY_URL_BASE = os.getenv("VERIFY_URL_BASE")
+NEW_TOKEN_URL_BASE = os.getenv("NEW_TOKEN_URL_BASE")
