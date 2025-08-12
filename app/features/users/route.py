@@ -1,5 +1,6 @@
 from typing import Annotated
 from app.features.locations.schema import LocationUpdateSchema
+from app.features.locations.service import LocationService
 from app.features.social_links.service import SocialLinksService
 from app.features.users.email_auth.service import EmailAuthService
 from app.features.users.password_auth.schema import UpdatePasswordSchema
@@ -188,5 +189,5 @@ class UserRoute:
     # --- LOCATION METHODS ---
     # ------------------------
     async def update_user_location_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], location_data: Annotated[LocationUpdateSchema, Body()], request: Request) -> None:
-        user_service = UserService(request)
-        return await user_service.update_user_location(user_find_schema, location_data)
+        location_service = LocationService(request)
+        return await location_service.update_location(user_find_schema, location_data)
