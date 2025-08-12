@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-import bcrypt
+from passlib.hash import bcrypt
 from fastapi import HTTPException
 from app.configs.send_email_config import NEW_TOKEN_URL_BASE
 from app.enums.account_state_enum import AccountStates

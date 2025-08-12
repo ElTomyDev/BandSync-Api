@@ -19,20 +19,14 @@ class PasswordAuthRepository:
             return UserModel(**user)
         return user
     
-    async def update_password(self, username: str, user_id: str, new_password: str) -> UpdateResult:
-        if username == None:
-            result = await self.__users_collection.update_one(
-                {"_id": ObjectId(user_id)},
-                {"$set": {"password_auth.password": new_password,
-                        "password_auth.last_update": datetime.now(timezone.utc)}}
-            )
-            return result
+    async def update_password(self, user_id: ObjectId, new_password: str) -> UpdateResult:
         result = await self.__users_collection.update_one(
-                {"username": username},
-                {"$set": {"password_auth.password": new_password,
-                        "password_auth.last_update": datetime.now(timezone.utc)}}
-            )
+            {"_id": user_id},
+            {"$set": {"password_auth.password": new_password,
+                    "password_auth.last_update": datetime.now(timezone.utc)}}
+        )
         return result
+        
 
     
         
