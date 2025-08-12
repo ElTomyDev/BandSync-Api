@@ -23,7 +23,7 @@ class PasswordAuthService:
     async def update_password(self, user_find_schema: UserFindSchema, update_password_schema: UpdatePasswordSchema) -> None:
         UserValidations.valid_id_and_username_fields(user_find_schema)
         user_model = await self.__repository.find_one(user_find_schema.id, user_find_schema.username)
-        
+        UserValidations.valid_user_existence(user_find_schema, user_model)
         UserValidations.valid_password_is_correct(update_password_schema.old_password, user_model.password_auth.password)
         
         update_result = await self.__repository.update_password(user_model.id, bcrypt.hash(update_password_schema.new_password))
