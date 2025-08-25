@@ -33,7 +33,7 @@ class UserService:
     # -----------------------
     async def __find_user_document(self, user_find_schema: UserFindSchema) -> UserModel:
         UserValidations.valid_id_and_username_fields(user_find_schema)
-        user = await self.__repository.find_one(user_find_schema.id, user_find_schema.username)
+        user = await self.__repository.find_one_by_id_or_username(user_find_schema.id, user_find_schema.username)
         UserValidations.valid_user_existence(user_find_schema, user)
         return user
     
