@@ -22,9 +22,10 @@ class EmailAuthService:
         await self.send_verification_email(email_created.email, email_created.email_verification_token)
         return email_created
     
-    async def verify_email(self, token: str) -> None:
-        user_model = await self.__repository.find_one_by_token(token)
+    async def verify_email(self, email: str, token: str) -> None:
         
+        user_model = await self.__repository.find_one_by_email(email)
+        UserValidations.valid_user_existence(None, user_model)
         UserValidations.valid_email_is_already_verify(user_model)
         
         expiry_date = user_model.email_auth.email_verification_expiry

@@ -23,17 +23,21 @@ class UserValidations:
             raise HTTPException(status_code=403, detail=f"You must provide at least one field (id or username)")
     
     def valid_user_existence(user_find_schema: UserFindSchema, user: UserModel) -> None:
-        """status_code=500, detail="The password could not be updated"
+        """
         The function receives a `user_find_schema` with either an `id` or `username`, and a `user` object from a database query.
         If `user` is `None`, it raises an HTTP 404 exception indicating the user was not found.
 
         Raises:
             `HTTPException`: If `user` is `None`, with status code 404 and a descriptive message. 
         """
+        msg = "User not found"
+        if user_find_schema != None:
+            msg = f"The user with {f"id: '{user_find_schema.id}'" if user_find_schema.id != None else f"username: '{user_find_schema.username}'"}. Not found"
+            
         if user == None:
             raise HTTPException(
                 status_code=404, 
-                detail=f"The user with {f"id: '{user_find_schema.id}'" if user_find_schema.id != None else f"username: '{user_find_schema.username}'"}. Not found")
+                detail=msg)
     
     def valid_username_in_use(exist_user: bool, username: str) -> None:
         if exist_user:

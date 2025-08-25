@@ -11,7 +11,7 @@ class EmailAuthRepository:
     def __init__(self, request: Request):
         self.__users_collection = request.app.state.db['users']
     
-    async def __find_one_by_email(self, email: str) -> UserModel | None:
+    async def find_one_by_email(self, email: str) -> UserModel | None:
         user = await self.__users_collection.find_one({'email_auth.email': email})
         
         if user:
@@ -19,7 +19,7 @@ class EmailAuthRepository:
         return None
     
     async def exist_email(self, email: str) -> bool:
-        return await self.__find_one_by_email(email) != None
+        return await self.find_one_by_email(email) != None
     
     async def find_one_by_token(self, token: str) -> UserModel | None:
         user = await self.__users_collection.find_one({'email_auth.email_verification_token': token})
