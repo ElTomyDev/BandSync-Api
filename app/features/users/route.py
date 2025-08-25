@@ -164,9 +164,9 @@ class UserRoute:
     # --------------------------
     # --- EMAIL AUTH METHODS ---
     # --------------------------
-    async def verify_email(self, token: str, request: Request) -> None:
+    async def verify_email(self, email: str, token: str, request: Request) -> None:
         email_auth_service = EmailAuthService(request)
-        await email_auth_service.verify_email(token)
+        await email_auth_service.verify_email(email, token)
     
     async def generate_new_email_token(self, email: str, request: Request) -> None:
         email_auth_service = EmailAuthService(request)

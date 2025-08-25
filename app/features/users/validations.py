@@ -48,10 +48,10 @@ class UserValidations:
             raise HTTPException(status_code=409, detail=f"The email '{email}' is already register.")
     
     def valid_email_is_already_verify(user_model:  UserModel) -> None:
-        if user_model == None or user_model.email_auth.email_verified == True:
+        if user_model.email_auth.email_verified == True:
             raise HTTPException(status_code=409, detail="The email it is already verified")
     
-    def valid_email_expiry(expiry_date: datetime, email: str) -> None:
+    def valid_email_verification_expiry(expiry_date: datetime, email: str) -> None:
         if expiry_date is None or expiry_date.tzinfo is None:
             expiry_date = expiry_date.replace(tzinfo=timezone.utc)
             
@@ -59,8 +59,13 @@ class UserValidations:
             
             raise HTTPException(status_code=401, detail=f"The token is expired. Click here to generate a new token: {NEW_TOKEN_URL_BASE}/?email={email}")
     
-    def valid_password_is_correct(password, to_password) -> None:
-        if not bcrypt.verify(password, to_password):
+    def valid_email_verification_token(token: str, hash_token: str) -> None:
+        if not bcrypt.verify(token, hash_token):
+            raise HTTPException(status_code=400, detail="The email token is incorrect")
+        
+    
+    def valid_password_is_correct(password: str, hash_password: str) -> None:
+        if not bcrypt.verify(password, hash_password):
             raise HTTPException(status_code=400, detail="The password is incorrect")
     
     def valid_update_or_delete_result(count: int, msg: str) -> None:
