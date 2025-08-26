@@ -4,6 +4,7 @@ from fastapi import HTTPException
 from app.configs.send_email_config import NEW_TOKEN_URL_BASE
 from app.enums.account_state_enum import AccountStates
 from app.enums.role_enum import MusicalRoles
+from app.features.users.login_auth.schema import LoginSchema
 from app.features.users.model import UserModel
 from app.features.users.schema import UserFindSchema
 
@@ -21,6 +22,19 @@ class UserValidations:
         """
         if user_find_schema.id == None and user_find_schema.username == None:
             raise HTTPException(status_code=403, detail=f"You must provide at least one field (id or username)")
+    
+    def valid_login_fields(login_schema: LoginSchema) -> None:
+        """
+        Validates that at least one identifier (either `email` or `username`) is provided in the `login_schema`.
+
+        Both fields are obtained from `LoginSchema`, and the function ensures that they are not `None` simultaneously.
+        If both are `None`, an HTTP 403 (Forbidden) exception is raised to prevent unauthorized access without sufficient user identification.
+        
+        Raises:
+            `HTTPException`: If `email` and `username` is `None`, with status code 403 and a descriptive message. 
+        """
+        if login_schema.email == None and login_schema.username == None:
+            raise HTTPException(status_code=403, detail=f"You must provide at least one field (email or username)")
     
     def valid_user_existence(user_find_schema: UserFindSchema, user: UserModel) -> None:
         """

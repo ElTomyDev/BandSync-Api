@@ -17,11 +17,23 @@ class UserRepository:
             user = await self.__users_collection.find_one({'username': username})
             if user:
                 return UserModel(**user)
+            return user
         user = await self.__users_collection.find_one({'_id': ObjectId(id)})
         if user:
             return UserModel(**user)
         return user
     
+    async def find_one_by_username_or_email(self, username: str|None, email: str|None) -> UserModel | None:
+        if username == None:
+            user = await self.__users_collection.find_one({'email_auth.email': email})
+            if user:
+                return UserModel(**user)
+            return user
+        user = await self.__users_collection.find_one({'username': username})
+        if user:
+            return UserModel(**user)
+        return user
+        
     async def update_one(self, user_id: str|None, username: str|None, field:str, value: Any) -> UpdateResult:
         if user_id == None:
             update_result = await self.__users_collection.update_one(
