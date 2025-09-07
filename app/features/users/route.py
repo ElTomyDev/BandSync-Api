@@ -1,17 +1,36 @@
 from typing import Annotated
+
+from fastapi.security import OAuth2PasswordBearer
 from app.features.locations.schema import LocationUpdateSchema
+from app.features.locations.service import LocationService
+from app.features.social_links.service import SocialLinksService
 from app.features.users.email_auth.service import EmailAuthService
+from app.features.users.login_auth.schema import LoginSchema, LoginTokenSchema
+from app.features.users.login_auth.service import LoginAuthService
+from app.features.users.model import UserModel
 from app.features.users.password_auth.schema import UpdatePasswordSchema
+from app.features.users.password_auth.service import PasswordAuthService
 from app.features.users.schema import UpdateAccountStateSchema, UpdateDescriptionSchema, UpdateFindBandsSchema, UpdateImageURLSchema, UpdateLastnameSchema, UpdateMusicalRoleSchema, UpdateNameSchema, UpdatePhoneNumberSchema, UpdateUsernameSchema, UserFindSchema, UserRegisterSchema, UserResponseSchema
 from app.features.social_links.schema import UpdateSocialLinksSchema
 from app.features.users.service import UserService
 from fastapi import APIRouter, Body, Depends, status, Request
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/auth/login")
 
 class UserRoute:
     def __init__(self) -> None:
         
         self.router = APIRouter(prefix="/users", tags=["Users"])
+        
+        # ROUTES AUTH AND LOGIN
+        self.router.post(
+            "/auth/login",
+            response_model=LoginTokenSchema,
+        )(self.login)
+        
+        self.router.get(
+            "/auth/me",
+        )(self.get_current_user)
         
         # ROUTE FOR REGISTER NEW USER
         self.router.post(
@@ -110,6 +129,17 @@ class UserRoute:
             status_code=status.HTTP_204_NO_CONTENT
         )(self.update_user_location_route)
     
+    # -------------------------
+    # --- USER AUTH METHODS ---
+    # -------------------------
+    async def login(self, login_schema: Annotated[LoginSchema, Depends()], request: Request) -> LoginTokenSchema:
+        login_auth_service = LoginAuthService(request)
+        return await login_auth_service.login(login_schema)
+    
+    async def get_current_user(self, request: Request, token: str = Depends(oauth2_scheme)) -> UserResponseSchema:
+        login_auth_service = LoginAuthService(request)
+        return await login_auth_service.get_current_user(token)
+    
     # --------------------
     # --- USER METHODS ---
     # --------------------
@@ -122,9 +152,14 @@ class UserRoute:
         user_service = UserService(request)
         await user_service.delete_user(user_find_schema)
         
-    async def update_description_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_description_schema: Annotated[UpdateDescriptionSchema, Body()], request: Request) -> None:
+    async def update_description_route(
+        self,
+        current_user=Depends(oauth2_scheme),
+        update_description_schema: Annotated[UpdateDescriptionSchema, Body()]=None,
+        request: Request=None) -> None:
+        
         user_service = UserService(request)
-        await user_service.update_user_fields(user_find_schema, "description", update_description_schema.new_description)
+        await user_service.update_user(current_user.id, "description", update_description_schema.new_description)
     
     async def update_phone_number_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_phone_number_schema: Annotated[UpdatePhoneNumberSchema, Body()], request: Request) -> None:
         user_service = UserService(request)
@@ -161,9 +196,9 @@ class UserRoute:
     # --------------------------
     # --- EMAIL AUTH METHODS ---
     # --------------------------
-    async def verify_email(self, token: str, request: Request) -> None:
+    async def verify_email(self, email: str, token: str, request: Request) -> None:
         email_auth_service = EmailAuthService(request)
-        await email_auth_service.verify_email(token)
+        await email_auth_service.verify_email(email, token)
     
     async def generate_new_email_token(self, email: str, request: Request) -> None:
         email_auth_service = EmailAuthService(request)
@@ -172,20 +207,20 @@ class UserRoute:
     # -----------------------------
     # --- PASSWORD AUTH METHODS ---
     # -----------------------------
-    async def update_password_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_password_data: Annotated[UpdatePasswordSchema, Body()], request: Request) -> None:
-        user_service = UserService(request)
-        await user_service.update_user_password(user_find_schema, update_password_data)
+    async def update_password_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_password_schema: Annotated[UpdatePasswordSchema, Body()], request: Request) -> None:
+        password_auth_service = PasswordAuthService(request)
+        await password_auth_service.update_password(user_find_schema, update_password_schema)
     
     # ----------------------------
     # --- SOCIAL LINKS METHODS ---
     # ----------------------------
     async def update_user_social_links_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], social_data: Annotated[UpdateSocialLinksSchema, Body()], request: Request) -> None:
-        user_service = UserService(request)
-        return await user_service.update_user_social_links(user_find_schema, social_data)
+        social_links_service = SocialLinksService(request)
+        return await social_links_service.update_social_links(user_find_schema, social_data)
     
     # ------------------------
     # --- LOCATION METHODS ---
     # ------------------------
     async def update_user_location_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], location_data: Annotated[LocationUpdateSchema, Body()], request: Request) -> None:
-        user_service = UserService(request)
-        return await user_service.update_user_location(user_find_schema, location_data)
+        location_service = LocationService(request)
+        return await location_service.update_location(user_find_schema, location_data)
