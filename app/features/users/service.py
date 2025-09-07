@@ -33,8 +33,8 @@ class UserService:
     # -----------------------
     async def __find_user_document(self, user_find_schema: UserFindSchema) -> UserModel:
         UserValidations.valid_id_and_username_fields(user_find_schema)
-        user = await self.__repository.find_one(user_find_schema.id, user_find_schema.username)
-        UserValidations.valid_user_existence(user_find_schema, user)
+        user = await self.__repository.find_one_by_id_or_username(user_find_schema.id, user_find_schema.username)
+        UserValidations.valid_user_not_found(user_find_schema, user)
         return user
     
     # ---------------------
@@ -92,134 +92,24 @@ class UserService:
             f"An error occurred while trying to update the user's {field}"
         )
     
-    async def update_user_description(self, user_find_schema: UserFindSchema, update_description_schema: UpdateDescriptionSchema) -> None:
-        UserValidations.valid_id_and_username_fields(user_find_schema)
+    async def update_user(self, user_id: str, field: str, value: Any) -> None:
+        #UserValidations.valid_id_and_username_fields(user_find_schema)
+        if field == "musical_role":
+            UserValidations.valid_musical_role_range(value)
+        if field == "account_state":
+            UserValidations.valid_account_state_range(value)
+        if field == "username":
+            UserValidations.valid_username_in_use(await self.__repository.exist_username(value), value)
+            
         update_result = await self.__repository.update_one(
-            user_find_schema.id,
-            user_find_schema.username,
-            "description",
-            update_description_schema.new_description
+            user_id,
+            None,
+            field,
+            value
         )
         UserValidations.valid_update_or_delete_result(
-            update_result.matched_count, 
-            "An error occurred while trying to update the user's description."
+            update_result.matched_count,
+            f"An error occurred while trying to update the user's {field}"
         )
-    
-    async def update_user_phone_number(self, user_find_schema: UserFindSchema, update_phone_number_schema: UpdatePhoneNumberSchema) -> None:
-        UserValidations.valid_id_and_username_fields(user_find_schema)
-        update_result = await self.__repository.update_one(
-            user_find_schema.id,
-            user_find_schema.username,
-            "phone_number",
-            update_phone_number_schema.new_phone_number
-        )
-        UserValidations.valid_update_or_delete_result(
-            update_result.matched_count, 
-            "An error occurred while trying to update the user's phone number."
-        )
-    
-    async def update_user_name(self, user_find_schema: UserFindSchema, update_name_schema: UpdateNameSchema) -> None:
-        UserValidations.valid_id_and_username_fields(user_find_schema)
-        update_result = await self.__repository.update_one(
-            user_find_schema.id,
-            user_find_schema.username,
-            "name",
-            update_name_schema.new_name
-        )
-        UserValidations.valid_update_or_delete_result(
-            update_result.matched_count, 
-            "An error occurred while trying to update the user's name."
-        )
-        
-    async def update_user_lastname(self, user_find_schema: UserFindSchema, update_lastname_schema: UpdateLastnameSchema) -> None:
-        UserValidations.valid_id_and_username_fields(user_find_schema)
-        update_result = await self.__repository.update_one(
-            user_find_schema.id,
-            user_find_schema.username,
-            "lastname",
-            update_lastname_schema.new_lastname
-        )
-        UserValidations.valid_update_or_delete_result(
-            update_result.matched_count, 
-            "An error occurred while trying to update the user's lastname."
-        )
-    
-    async def update_user_username(self, user_find_schema: UserFindSchema, update_username_schema: UpdateUsernameSchema) -> None:
-        UserValidations.valid_id_and_username_fields(user_find_schema)
-        UserValidations.valid_username_in_use(await self.__repository.exist_username(update_username_schema.new_username), update_username_schema.new_username)
-        update_result = await self.__repository.update_one(
-            user_find_schema.id,
-            user_find_schema.username,
-            "username",
-            update_username_schema.new_username
-        )
-        UserValidations.valid_update_or_delete_result(
-            update_result.matched_count, 
-            "An error occurred while trying to update the user's username."
-        )
-    
-    async def update_user_imageurl(self, user_find_schema: UserFindSchema, update_imageurl_schema: UpdateImageURLSchema) -> None:
-        UserValidations.valid_id_and_username_fields(user_find_schema)
-        update_result = await self.__repository.update_one(
-            user_find_schema.id,
-            user_find_schema.username,
-            "image_url",
-            update_imageurl_schema.new_image_url
-        )
-        UserValidations.valid_update_or_delete_result(
-            update_result.matched_count, 
-            "An error occurred while trying to update the user's image URL."
-        )
-    
-    async def update_user_find_band(self, user_find_schema: UserFindSchema, update_find_band_schema: UpdateFindBandsSchema) -> None:
-        UserValidations.valid_id_and_username_fields(user_find_schema)
-        update_result = await self.__repository.update_one(
-            user_find_schema.id,
-            user_find_schema.username,
-            "find_bands",
-            update_find_band_schema.find_bands
-        )
-        UserValidations.valid_update_or_delete_result(
-            update_result.matched_count, 
-            "An error occurred while trying to update the find bands."
-        )
-        
-    async def update_user_musical_role(self, user_find_schema: UserFindSchema, update_musical_role_schema: UpdateMusicalRoleSchema) -> None:
-        UserValidations.valid_musical_role_range(update_musical_role_schema.musical_role)
-        UserValidations.valid_id_and_username_fields(user_find_schema)
-        update_result = await self.__repository.update_one(
-            user_find_schema.id,
-            user_find_schema.username,
-            "musical_role",
-            update_musical_role_schema.musical_role
-        )
-        UserValidations.valid_update_or_delete_result(
-            update_result.matched_count, 
-            "An error occurred while trying to update the musical role."
-        )
-    
-    async def update_user_account_state(self, user_find_schema: UserFindSchema, update_account_state_schema: UpdateAccountStateSchema) -> None:
-        UserValidations.valid_account_state_range(update_account_state_schema.account_state)
-        UserValidations.valid_id_and_username_fields(user_find_schema)
-        update_result = await self.__repository.update_one(
-            user_find_schema.id,
-            user_find_schema.username,
-            "account_state",
-            update_account_state_schema.account_state
-        )
-        UserValidations.valid_update_or_delete_result(
-            update_result.matched_count, 
-            "An error occurred while trying to update the account state."
-        )
-    
-    async def update_user_social_links(self, user_find_schema: UserFindSchema, social_links_data: UpdateSocialLinksSchema) -> None:
-        user = await self.__find_user_document(user_find_schema)
-        await self.__social_links_service.update_social_links(user, social_links_data)
 
-    async def update_user_location(self, user_find_schema: UserFindSchema, location_data: LocationUpdateSchema) -> None:
-        user = await self.__find_user_document(user_find_schema)
-        await self.__location_service.update_location(user, location_data)
-    
-    async def update_user_password(self, user_find_schema: UserFindSchema, update_password_data: UpdatePasswordSchema) -> None:
-        user = await self.__find_user_document(user_find_schema)
-        await self.__password_auth_service.update_password(user, update_password_data.old_password, update_password_data.new_password)
+
