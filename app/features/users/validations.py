@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from typing import Optional
 from passlib.hash import bcrypt
 from fastapi import HTTPException
 from app.configs.send_email_config import NEW_TOKEN_URL_BASE
@@ -23,20 +24,7 @@ class UserValidations:
         if user_find_schema.id == None and user_find_schema.username == None:
             raise HTTPException(status_code=403, detail=f"You must provide at least one field (id or username)")
     
-    def valid_login_fields(login_schema: LoginSchema) -> None:
-        """
-        Validates that at least one identifier (either `email` or `username`) is provided in the `login_schema`.
-
-        Both fields are obtained from `LoginSchema`, and the function ensures that they are not `None` simultaneously.
-        If both are `None`, an HTTP 403 (Forbidden) exception is raised to prevent unauthorized access without sufficient user identification.
-        
-        Raises:
-            `HTTPException`: If `email` and `username` is `None`, with status code 403 and a descriptive message. 
-        """
-        if login_schema.email == None and login_schema.username == None:
-            raise HTTPException(status_code=403, detail=f"You must provide at least one field (email or username)")
-    
-    def valid_user_existence(user_find_schema: UserFindSchema, user: UserModel) -> None:
+    def valid_user_not_found(user_find_schema: UserFindSchema, user: UserModel, error_msg: str|None = None) -> None:
         """
         The function receives a `user_find_schema` with either an `id` or `username`, and a `user` object from a database query.
         If `user` is `None`, it raises an HTTP 404 exception indicating the user was not found.
@@ -44,11 +32,11 @@ class UserValidations:
         Raises:
             `HTTPException`: If `user` is `None`, with status code 404 and a descriptive message. 
         """
-        msg = "User not found"
+        msg = "User not found" if error_msg is None else error_msg
         if user_find_schema != None:
             msg = f"The user with {f"id: '{user_find_schema.id}'" if user_find_schema.id != None else f"username: '{user_find_schema.username}'"}. Not found"
             
-        if user == None:
+        if user is None:
             raise HTTPException(
                 status_code=404, 
                 detail=msg)
@@ -76,11 +64,12 @@ class UserValidations:
     def valid_email_verification_token(token: str, hash_token: str) -> None:
         if not bcrypt.verify(token, hash_token):
             raise HTTPException(status_code=400, detail="The email token is incorrect")
-        
     
-    def valid_password_is_correct(password: str, hash_password: str) -> None:
+    def valid_password(password: str, hash_password: str, error_msg: str|None = None) -> None:
+        
+        detail = "The password is incorrect" if error_msg is None else error_msg
         if not bcrypt.verify(password, hash_password):
-            raise HTTPException(status_code=400, detail="The password is incorrect")
+            raise HTTPException(status_code=401, detail=detail)
     
     def valid_update_or_delete_result(count: int, msg: str) -> None:
         if count == 0:
@@ -93,3 +82,27 @@ class UserValidations:
     def valid_account_state_range(account_state: int) -> None:
         if account_state < 0 or account_state > len(AccountStates)-1:
             raise HTTPException(status_code=422, detail=f"The account_state must be within a range of 0 to {len(AccountStates)-1}")
+    
+    def check_account_state(account_state: int) -> None:
+        if account_state == AccountStates.BANNED:
+            raise HTTPException(status_code=403, detail="The account is banned")
+    
+    # -------------------------
+    # --- LOGIN VALIDATIONS ---
+    # -------------------------
+    def valid_token_sub_not_found(sub: str):
+        if sub is None:
+            raise HTTPException(status_code=401, detail="Invalid token: Sub not found")
+    
+    def valid_login_fields(login_schema: LoginSchema) -> None:
+        """
+        Validates that at least one identifier (either `email` or `username`) is provided in the `login_schema`.
+
+        Both fields are obtained from `LoginSchema`, and the function ensures that they are not `None` simultaneously.
+        If both are `None`, an HTTP 403 (Forbidden) exception is raised to prevent unauthorized access without sufficient user identification.
+        
+        Raises:
+            `HTTPException`: If `email` and `username` is `None`, with status code 403 and a descriptive message. 
+        """
+        if login_schema.email == None and login_schema.username == None:
+            raise HTTPException(status_code=403, detail=f"You must provide at least one field (email or username)")

@@ -30,7 +30,7 @@ class EmailAuthService:
     
     async def verify_email(self, email: str, token: str) -> None:
         user_model = await self.__repository.find_one_by_email(email)
-        UserValidations.valid_user_existence(None, user_model)
+        UserValidations.valid_user_not_found(None, user_model)
         
         UserValidations.valid_email_is_already_verify(user_model)
         

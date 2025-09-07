@@ -23,7 +23,7 @@ class UserRepository:
             return UserModel(**user)
         return user
     
-    async def find_one_by_username_or_email(self, username: str|None, email: str|None) -> UserModel | None:
+    async def find_one_by_username_or_email(self, username: str|None=None, email: str|None=None) -> UserModel | None:
         if username == None:
             user = await self.__users_collection.find_one({'email_auth.email': email})
             if user:
@@ -44,6 +44,24 @@ class UserRepository:
         update_result = await self.__users_collection.update_one(
             {"_id": ObjectId(user_id)},
             {"$set":{field:value}}
+        )
+        return update_result
+    
+    async def update_login_failure(self, user_id: str, current_increment: int) -> UpdateResult:
+        update_result = await self.__users_collection.update_one(
+            {"_id": ObjectId(user_id)},
+            {"$set":{"login_auth.failed_login_attempts": current_increment + 1,
+                     "login_auth.last_failed_login": datetime.now(timezone.utc)}}
+        )
+        return update_result
+    
+    async def update_correct_login(self, user_id: str) -> UpdateResult:
+        update_result = await self.__users_collection.update_one(
+            {"_id": ObjectId(user_id)},
+            {"$set":{
+                "login_auth.failed_login_attempts": 0,
+                "login_auth.last_connection": datetime.now(timezone.utc)
+            }}
         )
         return update_result
     
@@ -93,3 +111,6 @@ class UserRepository:
                     "password_auth.last_update": datetime.now(timezone.utc)}}
         )
         return result
+
+
+
