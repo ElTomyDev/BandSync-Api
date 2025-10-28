@@ -93,7 +93,6 @@ class UserService:
         )
     
     async def update_user(self, user_id: str, field: str, value: Any) -> None:
-        #UserValidations.valid_id_and_username_fields(user_find_schema)
         if field == "musical_role":
             UserValidations.valid_musical_role_range(value)
         if field == "account_state":

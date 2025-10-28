@@ -15,212 +15,136 @@ from app.features.social_links.schema import UpdateSocialLinksSchema
 from app.features.users.service import UserService
 from fastapi import APIRouter, Body, Depends, status, Request
 
+user_router = APIRouter(prefix="/users", tags=["Users"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/auth/login")
 
-class UserRoute:
-    def __init__(self) -> None:
-        
-        self.router = APIRouter(prefix="/users", tags=["Users"])
-        
-        # ROUTES AUTH AND LOGIN
-        self.router.post(
-            "/auth/login",
-            response_model=LoginTokenSchema,
-        )(self.login)
-        
-        self.router.get(
-            "/auth/me",
-        )(self.get_current_user)
-        
-        # ROUTE FOR REGISTER NEW USER
-        self.router.post(
-            "/register",
-            response_model=UserResponseSchema,
-            status_code=status.HTTP_201_CREATED,
-        )(self.register_user)
-        
-        # ROUTE FOR DELETE USER
-        self.router.delete(
-            "/delete",
-            status_code=status.HTTP_204_NO_CONTENT,
-        )(self.delete_user)
-        
-        # ROUTE FOR VERIFY EMAIL
-        self.router.get(
-            "/verify-email",
-            status_code=status.HTTP_202_ACCEPTED
-        )(self.verify_email)
-        
-        # ROUTE FOR GENERATE NEW TOKEN
-        self.router.get(
-            "/generate-new-token",
-            status_code=status.HTTP_202_ACCEPTED
-        )(self.generate_new_email_token)
-        
-        # ROUTER FOR UPDATE USER DESCRIPTION
-        self.router.put(
-            "/update-description",
-            status_code=status.HTTP_204_NO_CONTENT
-        )(self.update_description_route)
-        
-        # ROUTER FOR UPDATE USER PHONE NUMBER
-        self.router.put(
-            "/update-phone-number",
-            status_code=status.HTTP_204_NO_CONTENT
-        )(self.update_phone_number_route)
-        
-        # ROUTER FOR UPDATE USER NAME
-        self.router.put(
-            "/update-name",
-            status_code=status.HTTP_204_NO_CONTENT
-        )(self.update_name_route)
-        
-        # ROUTER FOR UPDATE USER LASTNAME
-        self.router.put(
-            "/update-lastname",
-            status_code=status.HTTP_204_NO_CONTENT
-        )(self.update_lastname_route)
-        
-        # ROUTER FOR UPDATE USER USERNAME
-        self.router.put(
-            "/update-username",
-            status_code=status.HTTP_204_NO_CONTENT
-        )(self.update_username_route)
-        
-        # ROUTER FOR UPDATE USER IMAGE URL
-        self.router.put(
-            "/update-image-url",
-            status_code=status.HTTP_204_NO_CONTENT
-        )(self.update_imageurl_route)
-        
-        # ROUTER FOR UPDATE USER FIND BANDS
-        self.router.put(
-            "/update-find-bands",
-            status_code=status.HTTP_204_NO_CONTENT
-        )(self.update_find_bands_route)
-        
-        # ROUTER FOR UPDATE USER MUSICAL ROLE
-        self.router.put(
-            "/update-musical-role",
-            status_code=status.HTTP_204_NO_CONTENT
-        )(self.update_musical_role_route)
-        
-        # ROUTER FOR UPDATE USER ACCOUNT STATE
-        self.router.put(
-            "/update-account-state",
-            status_code=status.HTTP_204_NO_CONTENT
-        )(self.update_account_state_route)
-        
-        # ROUTE FOR UPDATE USER PASSWORD
-        self.router.put(
-            "/update-password",
-            status_code=status.HTTP_204_NO_CONTENT
-        )(self.update_password_route)
-        
-        # ROUTE FOR UPDATE SOCIAL LINKS
-        self.router.put(
-            "/update-social-links",
-            status_code=status.HTTP_204_NO_CONTENT
-        )(self.update_user_social_links_route)
-        
-        # ROUTE FOR UPDATE LOCATION
-        self.router.put(
-            "/update-location",
-            status_code=status.HTTP_204_NO_CONTENT
-        )(self.update_user_location_route)
-    
-    # -------------------------
-    # --- USER AUTH METHODS ---
-    # -------------------------
-    async def login(self, login_schema: Annotated[LoginSchema, Depends()], request: Request) -> LoginTokenSchema:
-        login_auth_service = LoginAuthService(request)
-        return await login_auth_service.login(login_schema)
-    
-    async def get_current_user(self, request: Request, token: str = Depends(oauth2_scheme)) -> UserResponseSchema:
-        login_auth_service = LoginAuthService(request)
-        return await login_auth_service.get_current_user(token)
-    
-    # --------------------
-    # --- USER METHODS ---
-    # --------------------
-    async def register_user(self, user: UserRegisterSchema, request: Request) -> UserResponseSchema:
-        user_service = UserService(request)
-        new_user = await user_service.create_user_document(user)
-        return new_user
-    
-    async def delete_user(self, user_find_schema: Annotated[UserFindSchema, Depends()], request: Request) -> None:
-        user_service = UserService(request)
-        await user_service.delete_user(user_find_schema)
-        
-    async def update_description_route(
-        self,
-        current_user=Depends(oauth2_scheme),
-        update_description_schema: Annotated[UpdateDescriptionSchema, Body()]=None,
-        request: Request=None) -> None:
-        
-        user_service = UserService(request)
-        await user_service.update_user(current_user.id, "description", update_description_schema.new_description)
-    
-    async def update_phone_number_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_phone_number_schema: Annotated[UpdatePhoneNumberSchema, Body()], request: Request) -> None:
-        user_service = UserService(request)
-        await user_service.update_user_fields(user_find_schema, "phone_number", update_phone_number_schema.new_phone_number)
-        
-    async def update_name_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_name_schema: Annotated[UpdateNameSchema, Body()], request: Request) -> None:
-        user_service = UserService(request)
-        await user_service.update_user_fields(user_find_schema, "name", update_name_schema.new_name)
-        
-    async def update_lastname_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_lastname_schema: Annotated[UpdateLastnameSchema, Body()], request: Request) -> None:
-        user_service = UserService(request)
-        await user_service.update_user_fields(user_find_schema, "lastname", update_lastname_schema.new_lastname)
-    
-    async def update_username_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_username_schema: Annotated[UpdateUsernameSchema, Body()], request: Request) -> None:
-        user_service = UserService(request)
-        await user_service.update_user_fields(user_find_schema, "username", update_username_schema.new_username)
-    
-    async def update_imageurl_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_imageurl_schema: Annotated[UpdateImageURLSchema, Body()], request: Request) -> None:
-        user_service = UserService(request)
-        await user_service.update_user_fields(user_find_schema, "image_url", update_imageurl_schema.new_image_url)
-    
-    async def update_find_bands_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_find_bands_schema: Annotated[UpdateFindBandsSchema, Body()], request: Request) -> None:
-        user_service = UserService(request)
-        await user_service.update_user_fields(user_find_schema, "find_bands", update_find_bands_schema.find_bands)
-    
-    async def update_musical_role_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_musical_role_schema: Annotated[UpdateMusicalRoleSchema, Body()], request: Request) -> None:
-        user_service = UserService(request)
-        await user_service.update_user_fields(user_find_schema, "musical_role", update_musical_role_schema.musical_role)
-    
-    async def update_account_state_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_account_state_schema: Annotated[UpdateAccountStateSchema, Body()], request: Request) -> None:
-        user_service = UserService(request)
-        await user_service.update_user_fields(user_find_schema, "account_state", update_account_state_schema.account_state)
-        
-    # --------------------------
-    # --- EMAIL AUTH METHODS ---
-    # --------------------------
-    async def verify_email(self, email: str, token: str, request: Request) -> None:
-        email_auth_service = EmailAuthService(request)
-        await email_auth_service.verify_email(email, token)
-    
-    async def generate_new_email_token(self, email: str, request: Request) -> None:
-        email_auth_service = EmailAuthService(request)
-        await email_auth_service.generate_new_verify_token(email)
-    
-    # -----------------------------
-    # --- PASSWORD AUTH METHODS ---
-    # -----------------------------
-    async def update_password_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], update_password_schema: Annotated[UpdatePasswordSchema, Body()], request: Request) -> None:
-        password_auth_service = PasswordAuthService(request)
-        await password_auth_service.update_password(user_find_schema, update_password_schema)
-    
-    # ----------------------------
-    # --- SOCIAL LINKS METHODS ---
-    # ----------------------------
-    async def update_user_social_links_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], social_data: Annotated[UpdateSocialLinksSchema, Body()], request: Request) -> None:
-        social_links_service = SocialLinksService(request)
-        return await social_links_service.update_social_links(user_find_schema, social_data)
-    
-    # ------------------------
-    # --- LOCATION METHODS ---
-    # ------------------------
-    async def update_user_location_route(self, user_find_schema: Annotated[UserFindSchema, Depends()], location_data: Annotated[LocationUpdateSchema, Body()], request: Request) -> None:
-        location_service = LocationService(request)
-        return await location_service.update_location(user_find_schema, location_data)
+# -------------------------
+# --- USER AUTH METHODS ---
+# -------------------------
+# ROUTES AUTH AND LOGIN
+@user_router.post("/auth/login", response_model=LoginTokenSchema, status_code=status.HTTP_200_OK)
+async def login(login_schema: Annotated[LoginSchema, Depends()], request: Request) -> LoginTokenSchema:
+    login_auth_service = LoginAuthService(request)
+    return await login_auth_service.login(login_schema)
+
+@user_router.get("/auth/me")
+async def get_current_user(request: Request, token: str = Depends(oauth2_scheme)) -> UserResponseSchema:
+    login_auth_service = LoginAuthService(request)
+    return await login_auth_service.get_current_user(token)
+
+# --------------------
+# --- USER METHODS ---
+# --------------------
+# ROUTE FOR REGISTER NEW USER
+@user_router.post("/register", response_model=UserResponseSchema, status_code=status.HTTP_201_CREATED)
+async def register_user(user: UserRegisterSchema, request: Request) -> UserResponseSchema:
+    user_service = UserService(request)
+    new_user = await user_service.create_user_document(user)
+    return new_user
+
+# ROUTE FOR DELETE USER
+@user_router.delete("/delete", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_user(user_find_schema: Annotated[UserFindSchema, Depends()], request: Request) -> None:
+    user_service = UserService(request)
+    await user_service.delete_user(user_find_schema)
+
+# ROUTER FOR UPDATE USER DESCRIPTION
+@user_router.put("/update-description", status_code=status.HTTP_204_NO_CONTENT)
+async def update_description_route(
+    current_user: UserResponseSchema = Depends(get_current_user),
+    update_description_schema: UpdateDescriptionSchema = Body(...),
+    request: Request = None) -> None:
+
+    user_service = UserService(request)
+    await user_service.update_user(current_user.id, "description", update_description_schema.new_description)
+
+# ROUTER FOR UPDATE USER PHONE NUMBER
+@user_router.put("/update-phone-number", status_code=status.HTTP_204_NO_CONTENT)
+async def update_phone_number_route(user_find_schema: Annotated[UserFindSchema, Depends()], update_phone_number_schema: Annotated[UpdatePhoneNumberSchema, Body()], request: Request) -> None:
+    user_service = UserService(request)
+    await user_service.update_user_fields(user_find_schema, "phone_number", update_phone_number_schema.new_phone_number)
+
+# ROUTER FOR UPDATE USER NAME
+@user_router.put("/update-name", status_code=status.HTTP_204_NO_CONTENT)
+async def update_name_route(user_find_schema: Annotated[UserFindSchema, Depends()], update_name_schema: Annotated[UpdateNameSchema, Body()], request: Request) -> None:
+    user_service = UserService(request)
+    await user_service.update_user_fields(user_find_schema, "name", update_name_schema.new_name)
+
+# ROUTER FOR UPDATE USER LASTNAME
+@user_router.put("/update-lastname", status_code=status.HTTP_204_NO_CONTENT)
+async def update_lastname_route(user_find_schema: Annotated[UserFindSchema, Depends()], update_lastname_schema: Annotated[UpdateLastnameSchema, Body()], request: Request) -> None:
+    user_service = UserService(request)
+    await user_service.update_user_fields(user_find_schema, "lastname", update_lastname_schema.new_lastname)
+
+# ROUTER FOR UPDATE USER USERNAME
+@user_router.put("/update-username", status_code=status.HTTP_204_NO_CONTENT)
+async def update_username_route(user_find_schema: Annotated[UserFindSchema, Depends()], update_username_schema: Annotated[UpdateUsernameSchema, Body()], request: Request) -> None:
+    user_service = UserService(request)
+    await user_service.update_user_fields(user_find_schema, "username", update_username_schema.new_username)
+
+# ROUTER FOR UPDATE USER IMAGE URL
+@user_router.put("/update-image-url", status_code=status.HTTP_204_NO_CONTENT)
+async def update_imageurl_route(user_find_schema: Annotated[UserFindSchema, Depends()], update_imageurl_schema: Annotated[UpdateImageURLSchema, Body()], request: Request) -> None:
+    user_service = UserService(request)
+    await user_service.update_user_fields(user_find_schema, "image_url", update_imageurl_schema.new_image_url)
+
+# ROUTER FOR UPDATE USER FIND BANDS
+@user_router.put("/update-find-bands", status_code=status.HTTP_204_NO_CONTENT)
+async def update_find_bands_route(user_find_schema: Annotated[UserFindSchema, Depends()], update_find_bands_schema: Annotated[UpdateFindBandsSchema, Body()], request: Request) -> None:
+    user_service = UserService(request)
+    await user_service.update_user_fields(user_find_schema, "find_bands", update_find_bands_schema.find_bands)
+
+# ROUTER FOR UPDATE USER MUSICAL ROLE
+@user_router.put("/update-musical-role", status_code=status.HTTP_204_NO_CONTENT)
+async def update_musical_role_route(user_find_schema: Annotated[UserFindSchema, Depends()], update_musical_role_schema: Annotated[UpdateMusicalRoleSchema, Body()], request: Request) -> None:
+    user_service = UserService(request)
+    await user_service.update_user_fields(user_find_schema, "musical_role", update_musical_role_schema.musical_role)
+
+# ROUTER FOR UPDATE USER ACCOUNT STATE
+@user_router.put("/update-account-state", status_code=status.HTTP_204_NO_CONTENT)
+async def update_account_state_route(user_find_schema: Annotated[UserFindSchema, Depends()], update_account_state_schema: Annotated[UpdateAccountStateSchema, Body()], request: Request) -> None:
+    user_service = UserService(request)
+    await user_service.update_user_fields(user_find_schema, "account_state", update_account_state_schema.account_state)
+
+# --------------------------
+# --- EMAIL AUTH METHODS ---
+# --------------------------
+# ROUTE FOR VERIFY EMAIL
+@user_router.get("/verify-email",status_code=status.HTTP_202_ACCEPTED)
+async def verify_email(email: str, token: str, request: Request) -> None:
+    email_auth_service = EmailAuthService(request)
+    await email_auth_service.verify_email(email, token)
+
+# ROUTE FOR GENERATE NEW TOKEN
+@user_router.get("/generate-new-token",status_code=status.HTTP_202_ACCEPTED)
+async def generate_new_email_token(email: str, request: Request) -> None:
+    email_auth_service = EmailAuthService(request)
+    await email_auth_service.generate_new_verify_token(email)
+
+# -----------------------------
+# --- PASSWORD AUTH METHODS ---
+# -----------------------------
+# ROUTE FOR UPDATE USER PASSWORD
+@user_router.put("/update-password", status_code=status.HTTP_204_NO_CONTENT)
+async def update_password_route(user_find_schema: Annotated[UserFindSchema, Depends()], update_password_schema: Annotated[UpdatePasswordSchema, Body()], request: Request) -> None:
+    password_auth_service = PasswordAuthService(request)
+    await password_auth_service.update_password(user_find_schema, update_password_schema)
+
+# ----------------------------
+# --- SOCIAL LINKS METHODS ---
+# ----------------------------
+# ROUTE FOR UPDATE SOCIAL LINKS
+@user_router.put("/update-social-links", status_code=status.HTTP_204_NO_CONTENT)
+async def update_user_social_links_route(user_find_schema: Annotated[UserFindSchema, Depends()], social_data: Annotated[UpdateSocialLinksSchema, Body()], request: Request) -> None:
+    social_links_service = SocialLinksService(request)
+    return await social_links_service.update_social_links(user_find_schema, social_data)
+
+# ------------------------
+# --- LOCATION METHODS ---
+# ------------------------
+# ROUTE FOR UPDATE LOCATION
+@user_router.put("/update-location", status_code=status.HTTP_204_NO_CONTENT)
+async def update_user_location_route(user_find_schema: Annotated[UserFindSchema, Depends()], location_data: Annotated[LocationUpdateSchema, Body()], request: Request) -> None:
+    location_service = LocationService(request)
+    return await location_service.update_location(user_find_schema, location_data)
+
