@@ -142,13 +142,13 @@ async def update_account_state_route(
 # --- EMAIL AUTH METHODS ---
 # --------------------------
 # ROUTE FOR VERIFY EMAIL
-@user_router.get("/verify-email",status_code=status.HTTP_202_ACCEPTED)
+@user_router.get("/verify-email",  status_code=status.HTTP_202_ACCEPTED)
 async def verify_email(request: Request, email: str, token: str) -> None:
     email_auth_service = EmailAuthService(request)
     await email_auth_service.verify_email(email, token)
 
 # ROUTE FOR GENERATE NEW TOKEN
-@user_router.get("/generate-new-token",status_code=status.HTTP_202_ACCEPTED)
+@user_router.get("/generate-new-token", status_code=status.HTTP_202_ACCEPTED)
 async def generate_new_email_token(request: Request, email: str) -> None:
     email_auth_service = EmailAuthService(request)
     await email_auth_service.generate_new_verify_token(email)
